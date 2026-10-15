@@ -965,6 +965,8 @@ function paintLooks(canvas, d, images) {
   };
   row('Девушки', images.women, S * 0.47, S * 0.55);
   row('Мужчины', images.men, S * 1.2, S * 0.5);
+  g.fillStyle = '#8a7350'; g.font = `italic ${S * 0.045}px ${FONT.italic}`;
+  g.fillText('нажмите на карточку, чтобы закрыть', cx, S * 1.82);
 }
 
 // One bow loop: a flat ribbon folded into a teardrop. The ribbon's face looks at the viewer; it is pinched
@@ -1119,13 +1121,22 @@ function buildRibbons(d) {
   looksHolder.add(looks);
   group.add(looksHolder);
   const shuffle = { open: false, t: 0, from: 0, start: 0 };
+  let narrow = false; // phones: no room for the two cards side by side
   const placeCards = (e) => {
-    // front tag slides a little left; the back card comes out to the right with a small dip and a turn,
-    // staying behind the front card the whole time
-    tagHolder.position.set(lerp(0, -0.55, e), -0.32, 0.2);
-    tagHolder.rotation.z = lerp(0.04, 0.08, e);
-    looksHolder.position.set(lerp(0, 0.88, e), -0.34 - Math.sin(Math.PI * e) * 0.12 + e * 0.04, 0.17);
-    looksHolder.rotation.z = lerp(0.04, -0.1, e);
+    if (narrow) {
+      // the looks card comes out to the right, then swings in front of the tag; the tag slides away to the left
+      tagHolder.position.set(lerp(0, -1.7, e), -0.32, 0.2);
+      tagHolder.rotation.z = lerp(0.04, 0.12, e);
+      looksHolder.position.set(Math.sin(Math.PI * e) * 1.1, -0.34 - Math.sin(Math.PI * e) * 0.1, lerp(0.17, 0.26, e));
+      looksHolder.rotation.z = lerp(0.04, 0.0, e) - Math.sin(Math.PI * e) * 0.1;
+    } else {
+      // front tag slides a little left; the back card comes out to the right with a small dip and a turn,
+      // staying behind the front card the whole time
+      tagHolder.position.set(lerp(0, -0.55, e), -0.32, 0.2);
+      tagHolder.rotation.z = lerp(0.04, 0.08, e);
+      looksHolder.position.set(lerp(0, 0.88, e), -0.34 - Math.sin(Math.PI * e) * 0.12 + e * 0.04, 0.17);
+      looksHolder.rotation.z = lerp(0.04, -0.1, e);
+    }
     looksHolder.visible = e > 0.001;
   };
   placeCards(0);
@@ -1136,6 +1147,9 @@ function buildRibbons(d) {
   return {
     group, bands, tag, tagSize: { w: TW, h: TH }, getButton: () => button,
     isLooksOpen: () => shuffle.open,
+    setNarrow(v) { narrow = v; placeCards(smooth(shuffle.t)); },
+    isNarrow: () => narrow,
+    looks, looksSize: { w: LW, h: LH },
     setLooksOpen(open) {
       if (open === shuffle.open) return;
       if (open) loadPhotos();
@@ -1249,7 +1263,7 @@ function paintChalkboard(canvas, d) {
       lines.push(line);
       return lines;
     };
-    const top = S * 0.6, bottom = H - S * 0.68;
+    const top = S * 0.68, bottom = H - S * 0.66; // top: below the title and the corner photo
     let fs = S * 0.078, laid;
     for (;;) {
       c.font = `italic 500 ${fs}px ${FONT.italic}`; // small lines: italic, script is too thin to read here
@@ -1710,9 +1724,9 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     sd.placeCameo = (portrait) => {
       bracket.visible = !portrait;
       link.visible = eyelet.visible = cameo.userData.ring.visible = portrait;
-      cameo.scale.setScalar(portrait ? 0.85 : 1);
+      cameo.scale.setScalar(portrait ? 1.1 : 1);
       if (!portrait) { cameo.position.set(frameX, frameY, -0.02); return; }
-      const k = 0.85, rimA = Math.PI + 1.12; // near VII
+      const k = 1.1, rimA = Math.PI + 1.12; // near VII
       const er = CLOCK_R * 1.1 + 0.035; // eyelet centre, just outside the case
       eyelet.position.set(er * Math.cos(rimA), er * Math.sin(rimA), -0.04);
       eyelet.rotation.set(0, 0, rimA);
@@ -1860,9 +1874,9 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     sp.group.position.set(Math.cos(angle) * dist, y, Math.sin(angle) * dist);
     sp.group.rotation.y = Math.PI / 2 - angle;
     sp.group.traverse((o) => { if (o.isMesh) o.castShadow = o.castShadow && !o.material.transparent; });
-    const venuePhoto = buildPolaroid(stops[signIndex].photo, 0.62, 0.7, 'pin');
-    venuePhoto.position.set(0.68, 1.05, 0.17); // pinned to the column, overlapping the big board's top edge
-    venuePhoto.rotation.z = -0.08;
+    const venuePhoto = buildPolaroid(stops[signIndex].photo, 1.05, 1.18, 'pin');
+    venuePhoto.position.set(-0.05, -1.86, 0.08); // pinned to the column under the boards, where it has room
+    venuePhoto.rotation.z = 0.05;
     sp.group.add(venuePhoto);
     scene.add(sp.group);
     sign = { ...sp, angle, y };
@@ -1905,8 +1919,8 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     cb.group.position.set(Math.cos(angle) * dist, y, Math.sin(angle) * dist);
     cb.group.rotation.y = Math.PI / 2 - angle;
     cb.group.rotateX(-0.05); // hanging slightly forward from its rope
-    const boardPhoto = buildPolaroid(stops[boardIndex].photo, 0.52, 0.6, 'tape');
-    boardPhoto.position.set(0.66, 0.92, 0.1); // the tape on its top edge sits on the board's frame
+    const boardPhoto = buildPolaroid(stops[boardIndex].photo, 0.6, 0.69, 'tape');
+    boardPhoto.position.set(0.55, 0.88, 0.1); // the tape on its top edge sits on the board's frame
     boardPhoto.rotation.z = -0.14;
     cb.group.add(boardPhoto);
     scene.add(cb.group);
@@ -1960,19 +1974,19 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
   function signPose() {
     return view.portrait
       ? pose(sign.angle, 10.2, sign.y + 1.2, sign.y + 1.45)
-      : pose(sign.angle, 6.6, sign.y + 0.3, sign.y + 0.15);
+      : pose(sign.angle, 6.9, sign.y + 0.05, sign.y - 0.12); // low enough to include the photo under the boards
   }
   // Camera facing the bow and the tag hanging under it.
   function dressPose() {
     const midY = dress.y - 1.0;
     return view.portrait
-      ? pose(dress.angle, 8.6, midY + 1.0, midY + 1.15)
+      ? pose(dress.angle + 0.03, 5.7, midY + 0.55, midY + 0.75) // phones: the tag fills the width
       : pose(dress.angle, 5.6, midY + 0.3, midY + 0.1);
   }
   // Camera facing the chalkboard.
   function boardPose() {
     return view.portrait
-      ? pose(board.angle, 7.6, board.y + 1.05, board.y + 1.3)
+      ? pose(board.angle, 6.6, board.y + 0.85, board.y + 1.05) // phones: the board fills the width
       : pose(board.angle, 6.0, board.y + 0.3, board.y + 0.15);
   }
   // pose of stop i (0 = countdown above the capital, 1..n = stops along the vine)
@@ -2040,7 +2054,8 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     const w = document.documentElement.clientWidth || window.innerWidth, h = window.innerHeight;
     view.w = w; view.h = h; view.portrait = w < 760 || h > w * 1.1;
     dial?.placeCameo?.(view.portrait);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, view.portrait ? 1.5 : 1.75));
+    dress?.setNarrow?.(view.portrait);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, view.portrait ? 2 : 1.75)); // phones: 2, or small text on the boards blurs
     renderer.setSize(w, h, false);
     blur?.setSize();
     camera.aspect = w / h;
@@ -2145,7 +2160,16 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
       const corners = [[b.x, b.y], [b.x + b.w, b.y], [b.x + b.w, b.y + b.h], [b.x, b.y + b.h]]
         .map(([x, y]) => toScreen(dress.tag.localToWorld(new THREE.Vector3(x - w / 2, h / 2 - y, 0.01))));
       const xs = corners.map((c) => c.x), ys = corners.map((c) => c.y);
-      const dressVisible = state.active === dressIndex + 1 && corners[0].on;
+      // phones: the open looks card covers the screen and the tag (with its button) slides away,
+      // so the card itself becomes the button that closes it
+      if (dress.isLooksOpen() && dress.isNarrow()) {
+        dress.looks.updateMatrixWorld();
+        const { w: lw, h: lh } = dress.looksSize;
+        corners.splice(0, 4, ...[[-lw / 2, lh / 2], [lw / 2, lh / 2], [lw / 2, -lh / 2], [-lw / 2, -lh / 2]]
+          .map(([x, y]) => toScreen(dress.looks.localToWorld(new THREE.Vector3(x, y, 0.01)))));
+        xs.splice(0, 4, ...corners.map((c) => c.x)); ys.splice(0, 4, ...corners.map((c) => c.y));
+      }
+      const dressVisible = state.active === dressIndex + 1 && corners.some((c) => c.on);
       if (!dressVisible && dress.isLooksOpen()) dress.setLooksOpen(false); // tuck the card back when we move on
       dressInfo = {
         visible: dressVisible,
