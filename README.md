@@ -11,7 +11,7 @@ npm start
 ```
 
 Open http://localhost:3000 (generic link) or http://localhost:3000/?g=petrovy (personal link).
-Admin panel: http://localhost:3000/admin — any username, password from `ADMIN_PASSWORD` (default `change-me`).
+Admin panel: http://localhost:3000/admin — login `anna`, password `maks` (change them on the server with `ADMIN_USER` / `ADMIN_PASSWORD`).
 
 ## What to edit
 
@@ -74,7 +74,6 @@ After=network.target
 WorkingDirectory=/opt/invitation
 ExecStart=/usr/bin/node server.js
 Environment=PORT=3000
-Environment=ADMIN_PASSWORD=put-a-long-password-here
 Restart=always
 User=www-data
 

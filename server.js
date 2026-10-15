@@ -7,16 +7,15 @@ const compression = require('compression');
 const { DatabaseSync } = require('node:sqlite');
 
 const PORT = Number(process.env.PORT) || 3000;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me';
+// Admin panel login (can be overridden on the server with ADMIN_USER / ADMIN_PASSWORD)
+const ADMIN_USER = process.env.ADMIN_USER || 'anna';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'maks';
 const DATA_DIR = path.join(__dirname, 'data');
 const GUESTS_FILE = path.join(DATA_DIR, 'guests.json');
 const DB_FILE = path.join(DATA_DIR, 'rsvp.sqlite');
 
 const DRINKS = ['Шампанское', 'Вино красное', 'Вино белое', 'Водка', 'Виски', 'Коньяк', 'Что-то безалкогольное'];
 
-if (ADMIN_PASSWORD === 'change-me') {
-  console.warn('[warn] ADMIN_PASSWORD is not set — using the default "change-me". Set it before deploying.');
-}
 
 // ---------- guests ----------
 // Re-read on every request so you can edit guests.json without restarting the server.
@@ -158,10 +157,9 @@ function requireAdmin(req, res, next) {
   const header = req.headers.authorization || '';
   const [scheme, encoded] = header.split(' ');
   if (scheme === 'Basic' && encoded) {
-    const pass = Buffer.from(encoded, 'base64').toString('utf8').split(':').slice(1).join(':');
-    const a = Buffer.from(pass);
-    const b = Buffer.from(ADMIN_PASSWORD);
-    if (a.length === b.length && crypto.timingSafeEqual(a, b)) return next();
+    const [user, ...rest] = Buffer.from(encoded, 'base64').toString('utf8').split(':');
+    const same = (x, y) => { const a = Buffer.from(x), b = Buffer.from(y); return a.length === b.length && crypto.timingSafeEqual(a, b); };
+    if (same(user, ADMIN_USER) & same(rest.join(':'), ADMIN_PASSWORD)) return next(); // & — check both, always
   }
   res.set('WWW-Authenticate', 'Basic realm="admin", charset="UTF-8"').status(401).send('Нужен пароль');
 }
