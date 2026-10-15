@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Аня &amp; Максим · 01.07.2027</title>
+  <meta name="description" content="Приглашение на свадьбу Ани и Максима, 1 июля 2027">
+  <meta property="og:title" content="Аня & Максим · 01.07.2027">
+  <meta property="og:description" content="Приглашаем вас на нашу свадьбу!">
+  <meta name="theme-color" content="#9cc7e8">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/vendor/fonts/cormorant/400.css">
+  <link rel="stylesheet" href="/vendor/fonts/cormorant/500.css">
+  <link rel="stylesheet" href="/vendor/fonts/cormorant/600.css">
+  <link rel="stylesheet" href="/vendor/fonts/prata/400.css">
+  <link rel="stylesheet" href="/vendor/fonts/eb-garamond/400-italic.css">
+  <link rel="stylesheet" href="/vendor/fonts/eb-garamond/600-italic.css">
+  <link rel="stylesheet" href="/vendor/fonts/eb-garamond/500-italic.css">
+  <link rel="stylesheet" href="/vendor/fonts/great-vibes/400.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">
+    { "imports": {
+        "three": "/vendor/three/build/three.module.min.js",
+        "three/addons/": "/vendor/three/examples/jsm/"
+    } }
+  </script>
+</head>
+<body>
+  <!-- Gilded frame ornaments, reused by every photo frame via <use> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#fff1bf"/><stop offset=".3" stop-color="#d9b24f"/>
+        <stop offset=".55" stop-color="#9c7322"/><stop offset=".8" stop-color="#e8c768"/><stop offset="1" stop-color="#8a6419"/>
+      </linearGradient>
+      <filter id="paper" x="0" y="0" width="100%" height="100%">
+              <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" seed="4" result="n"/>
+              <feColorMatrix in="n" type="matrix" values="0 0 0 0 .45  0 0 0 0 .38  0 0 0 0 .26  0 0 0 .22 0" result="grain"/>
+              <feTurbulence type="fractalNoise" baseFrequency=".012 .2" numOctaves="2" seed="9" result="f"/>
+              <feColorMatrix in="f" type="matrix" values="0 0 0 0 .5  0 0 0 0 .42  0 0 0 0 .3  0 0 0 .16 0" result="fibers"/>
+              <feComposite in="grain" in2="SourceGraphic" operator="in" result="g2"/>
+              <feComposite in="fibers" in2="SourceGraphic" operator="in" result="f2"/>
+              <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="f2"/><feMergeNode in="g2"/></feMerge>
+            </filter>
+      <linearGradient id="pocketL" x1="0" x2="1"><stop offset="0" stop-color="#efe3c8"/><stop offset="1" stop-color="#e0d0ae"/></linearGradient>
+      <linearGradient id="pocketR" x1="1" x2="0"><stop offset="0" stop-color="#ecdfc2"/><stop offset="1" stop-color="#dbcaa7"/></linearGradient>
+      <linearGradient id="pocketB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#f6ecd6"/><stop offset="1" stop-color="#e7d9b9"/></linearGradient>
+      <linearGradient id="flapG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6d8b8"/><stop offset="1" stop-color="#f6ecd7"/></linearGradient>
+      <symbol id="seal-art" viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="wax" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#d0574a"/><stop offset=".45" stop-color="#a5291e"/><stop offset="1" stop-color="#6a140d"/></radialGradient>
+              <radialGradient id="waxIn" cx=".62" cy=".7" r=".8"><stop offset="0" stop-color="#b8372a"/><stop offset=".7" stop-color="#8e2118"/><stop offset="1" stop-color="#6e170f"/></radialGradient>
+              <filter id="waxShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#3a0b06" flood-opacity=".45"/></filter>
+            </defs>
+            <path filter="url(#waxShadow)" fill="url(#wax)" d="M189.0 94.3Q190.7 100.0 191.6 106.1Q192.6 112.2 191.5 118.2Q190.5 124.2 184.9 128.6Q179.3 132.9 175.7 137.3Q172.1 141.7 168.9 146.0Q165.6 150.4 162.9 155.3Q160.2 160.2 158.4 167.0Q156.7 173.9 153.1 179.7Q149.4 185.6 143.6 188.4Q137.8 191.3 130.8 189.9Q123.7 188.5 117.8 189.7Q112.0 190.9 106.0 191.9Q100.0 192.9 94.1 191.1Q88.2 189.4 83.5 184.1Q78.9 178.9 74.1 176.5Q69.3 174.1 63.4 173.8Q57.5 173.6 51.1 172.8Q44.7 172.1 40.1 168.3Q35.4 164.6 31.9 159.8Q28.3 155.0 22.0 151.8Q15.7 148.6 13.4 142.7Q11.0 136.8 9.9 130.7Q8.7 124.5 10.4 118.0Q12.1 111.6 14.5 105.8Q16.8 100.0 18.9 94.8Q21.0 89.6 20.8 84.2Q20.6 78.7 18.9 72.2Q17.1 65.7 18.9 59.9Q20.7 54.2 23.4 48.8Q26.1 43.3 31.1 39.7Q36.1 36.1 41.5 33.4Q46.9 30.7 51.3 27.1Q55.8 23.4 61.2 21.4Q66.6 19.3 71.7 16.4Q76.8 13.5 82.3 10.3Q87.8 7.0 93.9 8.1Q100.0 9.1 105.7 10.9Q111.5 12.7 117.7 11.8Q123.8 11.0 130.1 11.6Q136.4 12.2 141.0 16.5Q145.7 20.9 149.1 26.2Q152.5 31.5 157.9 34.1Q163.4 36.6 168.8 39.9Q174.2 43.1 174.8 49.7Q175.5 56.4 177.6 61.7Q179.6 67.0 180.7 72.5Q181.9 78.1 184.6 83.3Q187.3 88.5 189.0 94.3Z"/>
+            <!-- pressed disc: dark rim at the top-left, light rim at the bottom-right -->
+            <circle cx="100" cy="100" r="70" fill="url(#waxIn)"/>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#5c120b" stroke-width="3" stroke-dasharray="220 220" stroke-dashoffset="-40" opacity=".7"/>
+            <circle cx="100" cy="100" r="71.5" fill="none" stroke="#e98e7e" stroke-width="1.6" stroke-dasharray="200 240" stroke-dashoffset="-260" opacity=".7"/>
+            <!-- bead border -->
+            <circle cx="100" cy="100" r="64" fill="none" stroke="#c9584a" stroke-width="2.6" stroke-dasharray=".1 6.3" stroke-linecap="round"/>
+            <!-- laurel wreath -->
+            <g fill="#7c1a12" stroke="#d26a5a" stroke-width=".7"><ellipse cx="79.8" cy="149.9" rx="6.8" ry="2.6" transform="rotate(170 79.8 149.9)"/><ellipse cx="77.4" cy="155.8" rx="6.8" ry="2.6" transform="rotate(234 77.4 155.8)"/><ellipse cx="67.6" cy="143.0" rx="6.8" ry="2.6" transform="rotate(185 67.6 143.0)"/><ellipse cx="63.8" cy="148.1" rx="6.8" ry="2.6" transform="rotate(249 63.8 148.1)"/><ellipse cx="57.6" cy="133.1" rx="6.8" ry="2.6" transform="rotate(200 57.6 133.1)"/><ellipse cx="52.6" cy="137.1" rx="6.8" ry="2.6" transform="rotate(264 52.6 137.1)"/><ellipse cx="50.5" cy="121.0" rx="6.8" ry="2.6" transform="rotate(215 50.5 121.0)"/><ellipse cx="44.6" cy="123.5" rx="6.8" ry="2.6" transform="rotate(279 44.6 123.5)"/><ellipse cx="46.7" cy="107.5" rx="6.8" ry="2.6" transform="rotate(230 46.7 107.5)"/><ellipse cx="40.4" cy="108.4" rx="6.8" ry="2.6" transform="rotate(294 40.4 108.4)"/><ellipse cx="46.6" cy="93.4" rx="6.8" ry="2.6" transform="rotate(245 46.6 93.4)"/><ellipse cx="40.2" cy="92.7" rx="6.8" ry="2.6" transform="rotate(309 40.2 92.7)"/><ellipse cx="50.1" cy="79.8" rx="6.8" ry="2.6" transform="rotate(260 50.1 79.8)"/><ellipse cx="44.2" cy="77.4" rx="6.8" ry="2.6" transform="rotate(324 44.2 77.4)"/><ellipse cx="57.0" cy="67.6" rx="6.8" ry="2.6" transform="rotate(275 57.0 67.6)"/><ellipse cx="51.9" cy="63.8" rx="6.8" ry="2.6" transform="rotate(339 51.9 63.8)"/><ellipse cx="66.9" cy="57.6" rx="6.8" ry="2.6" transform="rotate(290 66.9 57.6)"/><ellipse cx="62.9" cy="52.6" rx="6.8" ry="2.6" transform="rotate(354 62.9 52.6)"/><ellipse cx="120.2" cy="149.9" rx="6.8" ry="2.6" transform="rotate(-54 120.2 149.9)"/><ellipse cx="122.6" cy="155.8" rx="6.8" ry="2.6" transform="rotate(10 122.6 155.8)"/><ellipse cx="132.4" cy="143.0" rx="6.8" ry="2.6" transform="rotate(-69 132.4 143.0)"/><ellipse cx="136.2" cy="148.1" rx="6.8" ry="2.6" transform="rotate(-5 136.2 148.1)"/><ellipse cx="142.4" cy="133.1" rx="6.8" ry="2.6" transform="rotate(-84 142.4 133.1)"/><ellipse cx="147.4" cy="137.1" rx="6.8" ry="2.6" transform="rotate(-20 147.4 137.1)"/><ellipse cx="149.5" cy="121.0" rx="6.8" ry="2.6" transform="rotate(-99 149.5 121.0)"/><ellipse cx="155.4" cy="123.5" rx="6.8" ry="2.6" transform="rotate(-35 155.4 123.5)"/><ellipse cx="153.3" cy="107.5" rx="6.8" ry="2.6" transform="rotate(-114 153.3 107.5)"/><ellipse cx="159.6" cy="108.4" rx="6.8" ry="2.6" transform="rotate(-50 159.6 108.4)"/><ellipse cx="153.4" cy="93.4" rx="6.8" ry="2.6" transform="rotate(-129 153.4 93.4)"/><ellipse cx="159.8" cy="92.7" rx="6.8" ry="2.6" transform="rotate(-65 159.8 92.7)"/><ellipse cx="149.9" cy="79.8" rx="6.8" ry="2.6" transform="rotate(-144 149.9 79.8)"/><ellipse cx="155.8" cy="77.4" rx="6.8" ry="2.6" transform="rotate(-80 155.8 77.4)"/><ellipse cx="143.0" cy="67.6" rx="6.8" ry="2.6" transform="rotate(-159 143.0 67.6)"/><ellipse cx="148.1" cy="63.8" rx="6.8" ry="2.6" transform="rotate(-95 148.1 63.8)"/><ellipse cx="133.1" cy="57.6" rx="6.8" ry="2.6" transform="rotate(-174 133.1 57.6)"/><ellipse cx="137.1" cy="52.6" rx="6.8" ry="2.6" transform="rotate(-110 137.1 52.6)"/></g>
+            <path d="M100 160 l-5 6 M100 160 l5 6" stroke="#7c1a12" stroke-width="2.4" stroke-linecap="round"/>
+            <!-- embossed monogram: light edge, dark edge, then the face -->
+            <g font-family="'Script Caps', 'Great Vibes', cursive" font-size="50" text-anchor="middle">
+              <text x="99" y="113" fill="#e8907f" opacity=".8">А&amp;М</text>
+              <text x="101.5" y="115.5" fill="#4f0d07" opacity=".7">А&amp;М</text>
+              <text x="100" y="114" fill="#a2271c">А&amp;М</text>
+            </g>
+            <!-- gloss -->
+            <ellipse cx="72" cy="52" rx="30" ry="13" fill="#fff" opacity=".18" transform="rotate(-30 72 52)"/>
+            <ellipse cx="62" cy="47" rx="9" ry="4" fill="#fff" opacity=".35" transform="rotate(-30 62 47)"/>
+          </symbol>
+      <symbol id="orn-corner" viewBox="0 0 100 100">
+        <g fill="url(#gold)" stroke="#6e4f12" stroke-width="1.2" stroke-linejoin="round">
+          <!-- acanthus leaves along both edges -->
+          <path d="M14 14 C 36 4, 58 2, 78 10 C 66 12, 58 16, 54 22 C 48 16, 36 14, 26 20 Z"/>
+          <path d="M14 14 C 4 36, 2 58, 10 78 C 12 66, 16 58, 22 54 C 16 48, 14 36, 20 26 Z"/>
+          <path d="M22 22 C 40 26, 52 40, 50 56 C 44 46, 36 40, 26 38 C 30 34, 28 28, 22 22 Z"/>
+          <!-- rosette in the corner -->
+          <circle cx="16" cy="16" r="12"/>
+          <circle cx="16" cy="16" r="6.5" fill="#f6dd8a"/>
+          <circle cx="16" cy="16" r="2.6" fill="#8a6419" stroke="none"/>
+        </g>
+        <g fill="none" stroke="url(#gold)" stroke-width="4.5" stroke-linecap="round">
+          <path d="M80 10 C 94 6, 98 18, 90 22 C 84 25, 80 19, 84 16"/>
+          <path d="M10 80 C 6 94, 18 98, 22 90 C 25 84, 19 80, 16 84"/>
+        </g>
+      </symbol>
+      <symbol id="orn-crest" viewBox="0 0 120 60">
+        <g fill="url(#gold)" stroke="#6e4f12" stroke-width="1.2" stroke-linejoin="round">
+          <path d="M60 4 C 74 4, 90 16, 94 34 L 26 34 C 30 16, 46 4, 60 4 Z"/>
+          <path d="M60 10 L 60 34 M48 13 L 54 34 M72 13 L 66 34 M38 20 L 46 34 M82 20 L 74 34" fill="none" stroke="#7a5814" stroke-width="1.6"/>
+          <path d="M26 34 C 14 30, 4 38, 8 46 C 12 52, 22 50, 20 42 M94 34 C 106 30, 116 38, 112 46 C 108 52, 98 50, 100 42" fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M22 34 L 98 34 L 92 42 L 28 42 Z"/>
+          <circle cx="60" cy="48" r="7"/>
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div id="sky" aria-hidden="true"></div>
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div id="tags" aria-live="polite"></div>
+
+  <button id="mute" class="round-btn" type="button" aria-label="Включить музыку" aria-pressed="false">
+    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none"/></svg>
+    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5" fill="none"/></svg>
+  </button>
+  <audio id="music" loop preload="none"></audio>
+  <button id="scroll-cue" type="button" aria-label="Листайте вниз">
+    <span id="hint"></span>
+    <span class="cue-circle" aria-hidden="true"><i></i><i></i></span>
+  </button>
+
+  <div id="gate" role="dialog" aria-label="Приглашение">
+    <!-- Full-screen envelope seen from the back; gate.js draws the folds for the exact screen shape -->
+    <svg class="env-svg" id="env-pocket" aria-hidden="true"></svg>
+    <div class="env-flap"><svg class="env-svg" id="env-flap" aria-hidden="true"></svg></div>
+    <div class="env-vignette" aria-hidden="true"></div>
+    <p class="gate-to" id="gate-to"></p>
+    <button id="open-btn" type="button" class="seal" aria-label="Открыть приглашение">
+      <span class="seal-half l"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#seal-art"/></svg></span>
+      <span class="seal-half r"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#seal-art"/></svg></span>
+    </button>
+    <p class="gate-hint">Нажмите на печать, чтобы открыть</p>
+  </div>
+
+  <main>
+    <section id="intro">
+      <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span>Wedding day<span class="eyebrow-line" aria-hidden="true"></span></p>
+      <div class="intro-row">
+        <figure class="cloud-photo left" id="photo-0"></figure>
+        <div class="intro-center">
+          <h1 class="names">
+            <span class="name-line" id="bride"></span>
+            <span class="name-line amp" aria-hidden="true">&amp;</span>
+            <span class="name-line" id="groom"></span>
+          </h1>
+        </div>
+        <figure class="cloud-photo right" id="photo-1"></figure>
+      </div>
+      <p class="date" id="date"></p>
+      <p class="greeting" id="greeting"></p>
+      <p class="greeting-text" id="greeting-text"></p>
+    </section>
+
+    <div id="track" aria-hidden="true"></div>
+
+    <!-- Fallback for devices without WebGL: the same tags as a simple list -->
+    <section id="flat-stops" hidden></section>
+
+    <section id="rsvp">
+      <!-- Roman voting tablets (one question each), then the stack slides into the envelope and gets sealed -->
+      <div class="rsvp-stage" id="rsvp-stage">
+        <div class="tablet-pile" id="tablet-pile" aria-hidden="true"></div>
+        <form class="tablet-stack" id="rsvp-form" novalidate>
+          <div class="tablet back b2" aria-hidden="true"></div>
+          <div class="tablet back b1" aria-hidden="true"></div>
+          <div class="tablet front" id="tablet"></div>
+        </form>
+        <div class="env-scene" id="env-scene" hidden>
+          <div class="mini-env">
+            <svg class="mini-env-layer" viewBox="0 0 300 200" aria-hidden="true"><rect width="300" height="200" rx="4" fill="#d6c39b"/></svg>
+            <div class="mini-stack" aria-hidden="true"><i></i><i></i><i></i></div>
+            <svg class="mini-env-layer front" viewBox="0 0 300 200" aria-hidden="true">
+              <g filter="url(#paper)">
+                <path d="M0 0 L150 112 L300 0 L300 200 L0 200 Z" fill="url(#pocketB)"/>
+                <path d="M0 0 L146 110 Q150 116 146 122 L0 200 Z" fill="url(#pocketL)"/>
+                <path d="M300 0 L154 110 Q150 116 154 122 L300 200 Z" fill="url(#pocketR)"/>
+                <path d="M0 200 L145 104 Q150 100 155 104 L300 200 Z" fill="url(#pocketB)"/>
+              </g>
+              <path d="M0 200 L145 104 Q150 100 155 104 L300 200" fill="none" stroke="#bda679" stroke-width="1.4"/>
+              <rect x="1" y="1" width="298" height="198" rx="4" fill="none" stroke="#b89e70" stroke-width="2"/>
+            </svg>
+            <div class="mini-flap">
+              <svg viewBox="0 0 300 200" aria-hidden="true">
+                <path d="M0 0 L300 0 L162 118 Q150 128 138 118 Z" fill="url(#flapG)" filter="url(#paper)"/>
+                <path d="M0 0 L138 118 Q150 128 162 118 L300 0" fill="none" stroke="#b89e70" stroke-width="2"/>
+                <path d="M14 6 L144 112 M156 112 L286 6" fill="none" stroke="#c9a85a" stroke-width="1.4" stroke-dasharray="1 5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <svg class="mini-seal" viewBox="0 0 200 200" aria-hidden="true"><use href="#seal-art"/></svg>
+            <div class="env-thanks" id="env-thanks"></div>
+          </div>
+        </div>
+      </div>
+      <footer class="footer"><span id="footer-names"></span><small class="music-credit" id="music-credit"></small></footer>
+    </section>
+  </main>
+
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
