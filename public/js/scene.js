@@ -931,53 +931,60 @@ function paintTag(canvas, d, looksOpen = false) {
 }
 
 // The second card: example looks, drawn right onto the paper (photos load in as they arrive).
-// Lookbook card: one example look at a time, shown whole, with «‹ 3 / 14 ›» and a close mark.
-// Returns the tap areas in card units (from the top-left corner).
-function paintLooks(canvas, look, index, total) {
+// Lookbook card: two rows — men on top, women below — with two looks each; every row pages on its own (‹ ›).
+// rows: [{ label, looks: [{ img }], page, pages }]. Returns the tap areas in card units (from the top-left corner).
+function paintLooks(canvas, rows) {
   const W = canvas.width, H = canvas.height, S = TAG_PX;
   const g = canvas.getContext('2d');
   g.clearRect(0, 0, W, H);
   paintPaper(g, W, H, S);
   const cx = W / 2;
   g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.fillStyle = '#3b2a14'; g.font = `${S * 0.15}px ${FONT.script}`;
-  g.fillText('Примеры образов', cx, S * 0.2);
+  g.fillStyle = '#3b2a14'; g.font = `${S * 0.14}px ${FONT.script}`;
+  g.fillText('Примеры образов', cx, S * 0.17);
   // close mark, top right
-  const xr = W - S * 0.16, xy = S * 0.16, xs = S * 0.035;
-  g.beginPath(); g.arc(xr, xy, S * 0.065, 0, Math.PI * 2); g.fillStyle = 'rgba(95,111,44,.12)'; g.fill();
-  g.strokeStyle = '#5f6f2c'; g.lineWidth = S * 0.012; g.lineCap = 'round';
+  const xr = W - S * 0.15, xy = S * 0.15, xs = S * 0.032;
+  g.beginPath(); g.arc(xr, xy, S * 0.06, 0, Math.PI * 2); g.fillStyle = 'rgba(95,111,44,.12)'; g.fill();
+  g.strokeStyle = '#5f6f2c'; g.lineWidth = S * 0.011; g.lineCap = 'round';
   g.beginPath(); g.moveTo(xr - xs, xy - xs); g.lineTo(xr + xs, xy + xs); g.moveTo(xr + xs, xy - xs); g.lineTo(xr - xs, xy + xs); g.stroke();
-  if (look) {
-    g.fillStyle = '#5a4a30'; g.font = `italic 700 ${S * 0.08}px ${FONT.italic}`;
-    g.fillText(look.label, cx, S * 0.37);
-  }
-  // the photo, whole (contain), on the paper
-  const px = S * 0.1, py = S * 0.46, pw = W - S * 0.2, ph = H - S * 0.46 - S * 0.3;
-  const img = look?.img;
-  if (img?.complete && img.naturalWidth) {
-    const k = Math.min(pw / img.naturalWidth, ph / img.naturalHeight);
-    const iw = img.naturalWidth * k, ih = img.naturalHeight * k, ix = px + (pw - iw) / 2, iy = py + (ph - ih) / 2;
-    g.save(); g.shadowColor = 'rgba(60,40,20,.25)'; g.shadowBlur = S * 0.02; g.shadowOffsetY = S * 0.006;
-    g.fillStyle = '#fff'; g.fillRect(ix - S * 0.015, iy - S * 0.015, iw + S * 0.03, ih + S * 0.03);
-    g.restore();
-    g.drawImage(img, ix, iy, iw, ih);
-  } else {
-    g.fillStyle = '#efe4cc'; g.fillRect(px, py, pw, ph);
-    g.fillStyle = '#a08a5e'; g.font = `italic ${S * 0.06}px ${FONT.italic}`;
-    g.fillText(look ? 'загрузка…' : 'фото скоро', cx, py + ph / 2);
-  }
-  // footer: ‹ n / N ›
-  const fy = H - S * 0.15;
-  g.fillStyle = '#5f6f2c'; g.font = `${S * 0.12}px ${FONT.bold}`;
-  if (total > 1) { g.fillText('‹', S * 0.22, fy); g.fillText('›', W - S * 0.22, fy); }
-  g.fillStyle = '#3b2a14'; g.font = `${S * 0.075}px ${FONT.bold}`;
-  g.fillText(total ? `${index + 1} / ${total}` : '', cx, fy);
-  const half = W / S / 2;
-  return {
-    prev: { x: 0, y: 0.42, w: half, h: H / S - 0.42 },
-    next: { x: half, y: 0.42, w: half, h: H / S - 0.42 },
-    close: { x: W / S - 0.36, y: 0, w: 0.36, h: 0.34 },
+
+  const photo = (img, x, y, w, h) => { // whole photo (contain) with a thin white border
+    if (img?.complete && img.naturalWidth) {
+      const k = Math.min(w / img.naturalWidth, h / img.naturalHeight);
+      const iw = img.naturalWidth * k, ih = img.naturalHeight * k, ix = x + (w - iw) / 2, iy = y + (h - ih) / 2;
+      g.save(); g.shadowColor = 'rgba(60,40,20,.25)'; g.shadowBlur = S * 0.015; g.shadowOffsetY = S * 0.005;
+      g.fillStyle = '#fff'; g.fillRect(ix - S * 0.012, iy - S * 0.012, iw + S * 0.024, ih + S * 0.024);
+      g.restore();
+      g.drawImage(img, ix, iy, iw, ih);
+    } else {
+      g.fillStyle = '#efe4cc'; g.fillRect(x, y, w, h);
+      g.fillStyle = '#a08a5e'; g.font = `italic ${S * 0.05}px ${FONT.italic}`;
+      g.fillText(img ? 'загрузка…' : '', x + w / 2, y + h / 2);
+    }
   };
+  const areas = { close: { x: W / S - 0.34, y: 0, w: 0.34, h: 0.3 } };
+  const rowTop = [0.3, 1.27], rowH = 0.93; // label + photos, in card units
+  rows.forEach((row, ri) => {
+    const top = rowTop[ri] * S;
+    // label with the page count: «Мужчины · 1 / 3»
+    g.fillStyle = '#5a4a30'; g.font = `italic 700 ${S * 0.072}px ${FONT.italic}`;
+    g.fillText(row.pages > 1 ? `${row.label}  ·  ${row.page + 1} / ${row.pages}` : row.label, cx, top + S * 0.05);
+    const py = top + S * 0.11, ph = S * (rowH - 0.14);
+    const ax = S * 0.075; // arrows at the sides
+    const pw = (W - S * 0.3 - S * 0.05) / 2; // two photos between the arrows
+    const x0 = S * 0.15;
+    row.looks.forEach((look, i) => photo(look?.img, x0 + i * (pw + S * 0.05), py, pw, ph));
+    if (row.pages > 1) {
+      g.fillStyle = '#5f6f2c'; g.font = `${S * 0.13}px ${FONT.bold}`;
+      g.fillText('‹', ax, py + ph / 2); g.fillText('›', W - ax, py + ph / 2);
+    }
+    const half = W / S / 2;
+    areas[ri === 0 ? 'top' : 'bottom'] = {
+      prev: { x: 0, y: rowTop[ri], w: half, h: rowH },
+      next: { x: half, y: rowTop[ri], w: half, h: rowH },
+    };
+  });
+  return areas;
 }
 
 // One bow loop: a flat ribbon folded into a teardrop. The ribbon's face looks at the viewer; it is pinched
@@ -1109,22 +1116,29 @@ function buildRibbons(d) {
   looksCanvas.width = Math.round(LW * TAG_PX); looksCanvas.height = Math.round(LH * TAG_PX);
   const looksTex = new THREE.CanvasTexture(looksCanvas);
   looksTex.colorSpace = THREE.SRGBColorSpace; looksTex.anisotropy = 16;
-  // all looks in one row: women first, then men
-  const lookList = [
-    ...(d.womenImages || []).map((src) => ({ src, label: 'Девушки' })),
-    ...(d.menImages || []).map((src) => ({ src, label: 'Мужчины' })),
+  // two rows: men on top, women below; each shows two looks and pages on its own
+  const PER_PAGE = 2;
+  const lookRows = [
+    { label: 'Мужчины', list: (d.menImages || []).map((src) => ({ src })), page: 0 },
+    { label: 'Девушки', list: (d.womenImages || []).map((src) => ({ src })), page: 0 },
   ];
-  let lookIndex = 0, lookAreas = null;
-  const repaintLooks = () => { lookAreas = paintLooks(looksCanvas, lookList[lookIndex], lookIndex, lookList.length); looksTex.needsUpdate = true; };
-  // photos load only when the card is opened, one at a time (plus the next one), so nobody downloads all 1.5 MB
-  const loadLook = (i) => {
-    const look = lookList[i];
+  const pagesOf = (r) => Math.max(1, Math.ceil(r.list.length / PER_PAGE));
+  const pageLooks = (r, page) => r.list.slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE);
+  let lookAreas = null;
+  const repaintLooks = () => {
+    lookAreas = paintLooks(looksCanvas, lookRows.map((r) => ({ label: r.label, looks: pageLooks(r, r.page), page: r.page, pages: pagesOf(r) })));
+    looksTex.needsUpdate = true;
+  };
+  // photos load only when the card is opened: the visible page of each row plus the next one, so nobody downloads all 1.5 MB
+  const loadLook = (look) => {
     if (!look || look.img) return;
     look.img = new Image();
-    look.img.onload = () => { if (lookList[lookIndex] === look) repaintLooks(); };
+    look.img.onload = repaintLooks;
     look.img.src = look.src;
   };
-  const loadPhotos = () => { loadLook(lookIndex); loadLook((lookIndex + 1) % lookList.length); };
+  const loadPhotos = () => {
+    for (const r of lookRows) for (const pg of [r.page, (r.page + 1) % pagesOf(r)]) pageLooks(r, pg).forEach(loadLook);
+  };
   repaintLooks();
   FONTS_READY.then(repaintLooks);
   const looks = new THREE.Mesh(new THREE.PlaneGeometry(LW, LH), new THREE.MeshStandardMaterial({ map: looksTex, transparent: true, alphaTest: 0.5, roughness: 0.9, side: THREE.DoubleSide }));
@@ -1166,9 +1180,10 @@ function buildRibbons(d) {
     isNarrow: () => narrow,
     looks, looksSize: { w: LW, h: LH },
     getLookAreas: () => lookAreas,
-    stepLook(dir) {
-      if (!lookList.length) return;
-      lookIndex = (lookIndex + dir + lookList.length) % lookList.length;
+    stepLook(row, dir) { // row 0 = men (top), 1 = women (bottom)
+      const r = lookRows[row];
+      if (!r) return;
+      r.page = (r.page + dir + pagesOf(r)) % pagesOf(r);
       loadPhotos();
       repaintLooks();
     },
@@ -2228,7 +2243,10 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
           return { left: Math.min(...cx), top: Math.min(...cy), width: Math.max(...cx) - Math.min(...cx), height: Math.max(...cy) - Math.min(...cy) };
         };
         const ar = dress.getLookAreas();
-        if (ar) lookbook = { prev: rect(ar.prev), next: rect(ar.next), close: rect(ar.close) };
+        if (ar) lookbook = {
+          close: rect(ar.close),
+          rows: [ar.top, ar.bottom].map((r) => ({ prev: rect(r.prev), next: rect(r.next) })),
+        };
       }
       dressInfo = {
         visible: dressVisible,
@@ -2324,6 +2342,6 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
   const takeNeedsRender = () => { const r = needsRender; needsRender = false; return r; };
   const stats = () => ({ ...renderer.info.render, ...renderer.info.memory }); // debug: draw calls, triangles, GPU objects
   const toggleLooks = () => { if (dress) dress.setLooksOpen(!dress.isLooksOpen()); };
-  const stepLook = (dir) => { if (dress?.isLooksOpen()) { dress.stepLook(dir); needsRender = true; } };
+  const stepLook = (row, dir) => { if (dress?.isLooksOpen()) { dress.stepLook(row, dir); needsRender = true; } };
   return { render, resize, setPhases, takeNeedsRender, setCountdown, stats, toggleLooks, stepLook };
 }

@@ -276,7 +276,7 @@ function buildDressOverlay(scene) {
   $('tags').append(btn);
   // the open lookbook card: left / right half turns the page (tap or swipe), the corner mark closes it
   const place = (b, r) => Object.assign(b.style, { display: '', position: 'absolute', left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
-  const mkArea = (label, dir) => {
+  const mkArea = (label, row, dir) => {
     const b = el('button', 'venue-link');
     b.type = 'button';
     b.setAttribute('aria-label', label);
@@ -287,12 +287,15 @@ function buildDressOverlay(scene) {
       if (x0 === null) return;
       const dx = e.clientX - x0;
       x0 = null;
-      scene.stepLook(Math.abs(dx) > 30 ? (dx < 0 ? 1 : -1) : dir); // swipe left = next, as in a photo gallery
+      scene.stepLook(row, Math.abs(dx) > 30 ? (dx < 0 ? 1 : -1) : dir); // swipe left = next, as in a photo gallery
     });
     $('tags').append(b);
     return b;
   };
-  const prev = mkArea('Предыдущий образ', -1), next = mkArea('Следующий образ', 1);
+  const rowAreas = [['мужские', 0], ['женские', 1]].map(([who, row]) => ({
+    prev: mkArea(`Предыдущие ${who} образы`, row, -1),
+    next: mkArea(`Следующие ${who} образы`, row, 1),
+  }));
   const close = el('button', 'venue-link');
   close.type = 'button';
   close.setAttribute('aria-label', 'Закрыть примеры образов');
@@ -304,7 +307,10 @@ function buildDressOverlay(scene) {
     btn.style.display = showTag ? '' : 'none';
     if (showTag) Object.assign(btn.style, { position: 'absolute', left: `${d.button.left}px`, top: `${d.button.top}px`, width: `${d.button.width}px`, height: `${d.button.height}px` });
     const lb = d?.visible ? d.lookbook : null;
-    if (lb) { place(prev, lb.prev); place(next, lb.next); place(close, lb.close); } else prev.style.display = next.style.display = close.style.display = 'none';
+    rowAreas.forEach((ra, i) => {
+      if (lb) { place(ra.prev, lb.rows[i].prev); place(ra.next, lb.rows[i].next); } else ra.prev.style.display = ra.next.style.display = 'none';
+    });
+    if (lb) place(close, lb.close); else close.style.display = 'none';
   };
 }
 
