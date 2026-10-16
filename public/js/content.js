@@ -14,8 +14,8 @@ export const CONTENT = {
 
   // Photos in museum frames on the clouds (portrait 3:4 works best). Drop files into public/assets/photos/.
   photos: [
-    { src: 'assets/photos/placeholder-1.svg', alt: 'Аня' },
-    { src: 'assets/photos/placeholder-2.svg', alt: 'Максим' },
+    { src: 'assets/photos/couple-1.jpg', alt: 'Аня и Максим' },
+    { src: 'assets/photos/couple-3.jpg', alt: 'Аня и Максим' },
   ],
 
   // Background music: the first format the browser can play is used (.ogg for most, .mp3 for older iPhones).
@@ -85,7 +85,7 @@ export const CONTENT = {
       addressLine1: 'Московская обл., г.о. Щёлково',
       addressLine2: 'г. Фрязино, д. Гребнево',
       address: 'Московская обл., городской округ Щёлково, г. Фрязино, д. Гребнево',
-      mapUrl: 'https://yandex.ru/maps/-/CXBWFUlS',
+      mapUrl: 'https://yandex.ru/maps/-/CXBTVFyo',
     },
     {
       type: 'dresscode',
@@ -95,7 +95,7 @@ export const CONTENT = {
       // palette: sand, butter yellow, mustard, orange, terracotta, olive green, caramel brown
       colors: ['#D9C9B1', '#FCEBAC', '#E7A636', '#F06600', '#B54124', '#84A330', '#A1724F'],
       bowColor: '#B54124', // the bow in front of the ribbons (terracotta from the palette)
-      women: 'Вечерние платья длины миди и макси, рубашки, длинные юбки и брюки',
+      women: 'Вечерние платья длины миди и макси, блузки, длинные юбки и брюки',
       men: 'Рубашки, поло, брюки, пиджаки',
       // Example looks for the lookbook card (one at a time). Pictures are in public/assets/dresscode/.
       womenImages: [1, 2, 3, 4, 5, 6, 7, 8].map((n) => `assets/dresscode/women-${n}.jpg`),
@@ -103,7 +103,7 @@ export const CONTENT = {
     },
     {
       type: 'details',
-      photo: 'assets/photos/stop-details.jpg', // polaroid taped to the chalkboard
+      photo: 'assets/photos/stop-details-2.jpg', // polaroid taped to the chalkboard
       label: 'Детали',
       title: 'Детали',
       items: [
