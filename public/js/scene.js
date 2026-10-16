@@ -1,7 +1,7 @@
 // Three.js scene: sky with clouds, a Roman column wrapped in a grapevine, grape clusters at every stop.
 // The camera position is a pure function of scroll progress (0..1), see cameraAt().
 import * as THREE from 'three';
-import { buildRome } from './rome.js';
+import { buildRome, PEDESTAL_TOP } from './rome.js';
 import { BG_LAYER } from './layers.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
@@ -931,42 +931,53 @@ function paintTag(canvas, d, looksOpen = false) {
 }
 
 // The second card: example looks, drawn right onto the paper (photos load in as they arrive).
-function paintLooks(canvas, d, images) {
+// Lookbook card: one example look at a time, shown whole, with «‹ 3 / 14 ›» and a close mark.
+// Returns the tap areas in card units (from the top-left corner).
+function paintLooks(canvas, look, index, total) {
   const W = canvas.width, H = canvas.height, S = TAG_PX;
   const g = canvas.getContext('2d');
   g.clearRect(0, 0, W, H);
   paintPaper(g, W, H, S);
   const cx = W / 2;
   g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.fillStyle = '#3b2a14'; g.font = `${S * 0.155}px ${FONT.script}`;
-  g.fillText('Примеры образов', cx, S * 0.27);
-  const photo = (img, x, y, w, h) => {
-    g.save();
-    g.beginPath(); g.roundRect(x, y, w, h, S * 0.025); g.clip();
-    if (img?.complete && img.naturalWidth) { // cover-fit
-      const k = Math.max(w / img.naturalWidth, h / img.naturalHeight);
-      const iw = img.naturalWidth * k, ih = img.naturalHeight * k;
-      g.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
-    } else {
-      g.fillStyle = '#efe4cc'; g.fillRect(x, y, w, h);
-      g.fillStyle = '#a08a5e'; g.font = `italic ${S * 0.05}px ${FONT.italic}`;
-      g.fillText('фото скоро', x + w / 2, y + h / 2);
-    }
+  g.fillStyle = '#3b2a14'; g.font = `${S * 0.15}px ${FONT.script}`;
+  g.fillText('Примеры образов', cx, S * 0.2);
+  // close mark, top right
+  const xr = W - S * 0.16, xy = S * 0.16, xs = S * 0.035;
+  g.beginPath(); g.arc(xr, xy, S * 0.065, 0, Math.PI * 2); g.fillStyle = 'rgba(95,111,44,.12)'; g.fill();
+  g.strokeStyle = '#5f6f2c'; g.lineWidth = S * 0.012; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(xr - xs, xy - xs); g.lineTo(xr + xs, xy + xs); g.moveTo(xr + xs, xy - xs); g.lineTo(xr - xs, xy + xs); g.stroke();
+  if (look) {
+    g.fillStyle = '#5a4a30'; g.font = `italic 700 ${S * 0.08}px ${FONT.italic}`;
+    g.fillText(look.label, cx, S * 0.37);
+  }
+  // the photo, whole (contain), on the paper
+  const px = S * 0.1, py = S * 0.46, pw = W - S * 0.2, ph = H - S * 0.46 - S * 0.3;
+  const img = look?.img;
+  if (img?.complete && img.naturalWidth) {
+    const k = Math.min(pw / img.naturalWidth, ph / img.naturalHeight);
+    const iw = img.naturalWidth * k, ih = img.naturalHeight * k, ix = px + (pw - iw) / 2, iy = py + (ph - ih) / 2;
+    g.save(); g.shadowColor = 'rgba(60,40,20,.25)'; g.shadowBlur = S * 0.02; g.shadowOffsetY = S * 0.006;
+    g.fillStyle = '#fff'; g.fillRect(ix - S * 0.015, iy - S * 0.015, iw + S * 0.03, ih + S * 0.03);
     g.restore();
-    g.lineWidth = 2; g.strokeStyle = 'rgba(160,130,80,.5)';
-    g.beginPath(); g.roundRect(x, y, w, h, S * 0.025); g.stroke();
+    g.drawImage(img, ix, iy, iw, ih);
+  } else {
+    g.fillStyle = '#efe4cc'; g.fillRect(px, py, pw, ph);
+    g.fillStyle = '#a08a5e'; g.font = `italic ${S * 0.06}px ${FONT.italic}`;
+    g.fillText(look ? 'загрузка…' : 'фото скоро', cx, py + ph / 2);
+  }
+  // footer: ‹ n / N ›
+  const fy = H - S * 0.15;
+  g.fillStyle = '#5f6f2c'; g.font = `${S * 0.12}px ${FONT.bold}`;
+  if (total > 1) { g.fillText('‹', S * 0.22, fy); g.fillText('›', W - S * 0.22, fy); }
+  g.fillStyle = '#3b2a14'; g.font = `${S * 0.075}px ${FONT.bold}`;
+  g.fillText(total ? `${index + 1} / ${total}` : '', cx, fy);
+  const half = W / S / 2;
+  return {
+    prev: { x: 0, y: 0.42, w: half, h: H / S - 0.42 },
+    next: { x: half, y: 0.42, w: half, h: H / S - 0.42 },
+    close: { x: W / S - 0.36, y: 0, w: 0.36, h: 0.34 },
   };
-  const row = (label, imgs, y, h) => {
-    g.fillStyle = '#3b2a14'; g.font = `${S * 0.115}px ${FONT.script}`;
-    g.fillText(label, cx, y);
-    const n = imgs.length, gap = S * 0.04, inner = W - S * 0.3;
-    const w = (inner - gap * (n - 1)) / n;
-    imgs.forEach((img, i) => photo(img, S * 0.15 + i * (w + gap), y + S * 0.07, w, h));
-  };
-  row('Девушки', images.women, S * 0.47, S * 0.55);
-  row('Мужчины', images.men, S * 1.2, S * 0.5);
-  g.fillStyle = '#8a7350'; g.font = `italic ${S * 0.045}px ${FONT.italic}`;
-  g.fillText('нажмите на карточку, чтобы закрыть', cx, S * 1.82);
 }
 
 // One bow loop: a flat ribbon folded into a teardrop. The ribbon's face looks at the viewer; it is pinched
@@ -1025,11 +1036,11 @@ function buildRibbons(d) {
   const bands = new THREE.Group();
   colors.forEach((c, i) => {
     const R = SHAFT_R + 0.014 + i * 0.003;
-    const geo = new THREE.CylinderGeometry(R, R, 0.1, 128, 1, true);
+    const geo = new THREE.CylinderGeometry(R, R, 0.085, 128, 1, true);
     const pos = geo.attributes.position;
     for (let k = 0; k < pos.count; k++) { // gentle wave so the bands look tied by hand
       const a = Math.atan2(pos.getZ(k), pos.getX(k));
-      pos.setY(k, pos.getY(k) + (2.5 - i) * 0.105 + Math.sin(a * 2 + i * 0.7) * 0.035);
+      pos.setY(k, pos.getY(k) + ((colors.length - 1) / 2 - i) * 0.085 + Math.sin(a * 2 + i * 0.7) * 0.03);
     }
     geo.computeVertexNormals();
     const band = new THREE.Mesh(geo, satin(c));
@@ -1038,7 +1049,7 @@ function buildRibbons(d) {
   });
 
   // bow: two flattened loops + knot, in champagne satin
-  const bowMat = satin(colors[colors.length - 1]);
+  const bowMat = satin(d.bowColor || colors[colors.length - 1]);
   for (const sd of [-1, 1]) {
     const loop = new THREE.Mesh(bowLoopGeometry(sd), bowMat);
     loop.position.set(sd * 0.04, 0.02, 0.06);
@@ -1093,26 +1104,27 @@ function buildRibbons(d) {
   group.add(tagHolder);
 
   // the looks card waits right behind the tag, like the back card of a hand
-  const LW = 1.5, LH = 1.86;
+  const LW = 1.5, LH = 2.3;
   const looksCanvas = document.createElement('canvas');
   looksCanvas.width = Math.round(LW * TAG_PX); looksCanvas.height = Math.round(LH * TAG_PX);
-  const images = { women: [], men: [] };
   const looksTex = new THREE.CanvasTexture(looksCanvas);
   looksTex.colorSpace = THREE.SRGBColorSpace; looksTex.anisotropy = 16;
-  const repaintLooks = () => { paintLooks(looksCanvas, d, images); looksTex.needsUpdate = true; };
-  let photosRequested = false;
-  const loadPhotos = () => { // only when a guest actually opens the card: saves 1–3 MB for everyone else
-    if (photosRequested) return;
-    photosRequested = true;
-    for (const [key, list] of [['women', d.womenImages || []], ['men', d.menImages || []]]) {
-      for (const src of list) {
-        const img = new Image();
-        img.onload = repaintLooks;
-        img.src = src;
-        images[key].push(img);
-      }
-    }
+  // all looks in one row: women first, then men
+  const lookList = [
+    ...(d.womenImages || []).map((src) => ({ src, label: 'Девушки' })),
+    ...(d.menImages || []).map((src) => ({ src, label: 'Мужчины' })),
+  ];
+  let lookIndex = 0, lookAreas = null;
+  const repaintLooks = () => { lookAreas = paintLooks(looksCanvas, lookList[lookIndex], lookIndex, lookList.length); looksTex.needsUpdate = true; };
+  // photos load only when the card is opened, one at a time (plus the next one), so nobody downloads all 1.5 MB
+  const loadLook = (i) => {
+    const look = lookList[i];
+    if (!look || look.img) return;
+    look.img = new Image();
+    look.img.onload = () => { if (lookList[lookIndex] === look) repaintLooks(); };
+    look.img.src = look.src;
   };
+  const loadPhotos = () => { loadLook(lookIndex); loadLook((lookIndex + 1) % lookList.length); };
   repaintLooks();
   FONTS_READY.then(repaintLooks);
   const looks = new THREE.Mesh(new THREE.PlaneGeometry(LW, LH), new THREE.MeshStandardMaterial({ map: looksTex, transparent: true, alphaTest: 0.5, roughness: 0.9, side: THREE.DoubleSide }));
@@ -1125,16 +1137,19 @@ function buildRibbons(d) {
   const placeCards = (e) => {
     if (narrow) {
       // the looks card comes out to the right, then swings in front of the tag; the tag slides away to the left
-      tagHolder.position.set(lerp(0, -1.7, e), -0.32, 0.2);
+      // (the card also grows a little, so the photo fills the phone's width)
+      tagHolder.position.set(lerp(0, -2.4, e), -0.32, 0.2);
       tagHolder.rotation.z = lerp(0.04, 0.12, e);
-      looksHolder.position.set(Math.sin(Math.PI * e) * 1.1, -0.34 - Math.sin(Math.PI * e) * 0.1, lerp(0.17, 0.26, e));
+      looksHolder.position.set(Math.sin(Math.PI * e) * 1.1, lerp(-0.34, 0.42, e) - Math.sin(Math.PI * e) * 0.1, lerp(0.17, 0.3, e));
       looksHolder.rotation.z = lerp(0.04, 0.0, e) - Math.sin(Math.PI * e) * 0.1;
+      looksHolder.scale.setScalar(lerp(1, 1.42, e));
     } else {
+      looksHolder.scale.setScalar(1);
       // front tag slides a little left; the back card comes out to the right with a small dip and a turn,
       // staying behind the front card the whole time
       tagHolder.position.set(lerp(0, -0.55, e), -0.32, 0.2);
       tagHolder.rotation.z = lerp(0.04, 0.08, e);
-      looksHolder.position.set(lerp(0, 0.88, e), -0.34 - Math.sin(Math.PI * e) * 0.12 + e * 0.04, 0.17);
+      looksHolder.position.set(lerp(0, 0.88, e), -0.34 - Math.sin(Math.PI * e) * 0.12 + e * 0.24, 0.17); // ends higher: the card is taller than the tag
       looksHolder.rotation.z = lerp(0.04, -0.1, e);
     }
     looksHolder.visible = e > 0.001;
@@ -1150,6 +1165,13 @@ function buildRibbons(d) {
     setNarrow(v) { narrow = v; placeCards(smooth(shuffle.t)); },
     isNarrow: () => narrow,
     looks, looksSize: { w: LW, h: LH },
+    getLookAreas: () => lookAreas,
+    stepLook(dir) {
+      if (!lookList.length) return;
+      lookIndex = (lookIndex + dir + lookList.length) % lookList.length;
+      loadPhotos();
+      repaintLooks();
+    },
     setLooksOpen(open) {
       if (open === shuffle.open) return;
       if (open) loadPhotos();
@@ -1830,6 +1852,20 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
       .catch((err) => console.warn('Colosseum model not loaded, keeping the built-in one:', err));
   }
 
+  // Statue and pedestal: at the plaza on wide screens, in view of the countdown stop on phones (see rome.js).
+  function placeStatues() {
+    for (const spot of ground.userData.statueSpots || []) {
+      const s = view.portrait && spot.phone ? spot.phone : spot;
+      spot.pedestal.position.copy(s.position).y -= PEDESTAL_TOP;
+      spot.pedestal.rotation.y = s.rotationY;
+      if (spot.holder) {
+        spot.holder.position.copy(s.position);
+        spot.holder.rotation.y = s.rotationY + Math.PI; // the model faces -z: turn it to look at the viewer
+      }
+    }
+    renderer.shadowMap.needsUpdate = true;
+  }
+
   // Statues on the plaza pedestals: one low-poly model, copied onto every pedestal, in the same marble as the rest.
   if (statueModel?.src && ground.userData.statueSpots?.length) {
     import('three/addons/loaders/GLTFLoader.js')
@@ -1847,15 +1883,15 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
         const k = (statueModel.height || 6) / size.y;
         ground.userData.statueSpots.forEach((spot) => {
           const holder = new THREE.Group();
+          spot.holder = holder;
           const m = model.clone();
           m.position.set(-c.x, -box.min.y, -c.z);
           holder.add(m);
           holder.scale.setScalar(k);
-          holder.position.copy(spot.position);
-          holder.rotation.y = spot.rotationY + Math.PI; // the model faces -z: turn it to look past the column, at the viewer
           holder.traverse((o) => o.layers.set(BG_LAYER));
           ground.add(holder);
         });
+        placeStatues();
         needsRender = true;
         scheduleWarmUp?.();
         renderer.shadowMap.needsUpdate = true;
@@ -2058,6 +2094,7 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     view.w = w; view.h = h; view.portrait = w < 760 || h > w * 1.1;
     dial?.placeCameo?.(view.portrait);
     dress?.setNarrow?.(view.portrait);
+    placeStatues();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, view.portrait ? prCap : 1.75)); // phones: the screen's own sharpness
     renderer.setSize(w, h, false);
     blur?.setSize();
@@ -2180,9 +2217,24 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
       }
       const dressVisible = state.active === dressIndex + 1 && corners.some((c) => c.on);
       if (!dressVisible && dress.isLooksOpen()) dress.setLooksOpen(false); // tuck the card back when we move on
+      let lookbook = null;
+      if (dressVisible && dress.isLooksOpen()) {
+        dress.looks.updateMatrixWorld();
+        const { w: lw, h: lh } = dress.looksSize;
+        const rect = (a) => {
+          const c = [[a.x, a.y], [a.x + a.w, a.y], [a.x + a.w, a.y + a.h], [a.x, a.y + a.h]]
+            .map(([x, y]) => toScreen(dress.looks.localToWorld(new THREE.Vector3(x - lw / 2, lh / 2 - y, 0.01))));
+          const cx = c.map((q) => q.x), cy = c.map((q) => q.y);
+          return { left: Math.min(...cx), top: Math.min(...cy), width: Math.max(...cx) - Math.min(...cx), height: Math.max(...cy) - Math.min(...cy) };
+        };
+        const ar = dress.getLookAreas();
+        if (ar) lookbook = { prev: rect(ar.prev), next: rect(ar.next), close: rect(ar.close) };
+      }
       dressInfo = {
         visible: dressVisible,
         animating: near,
+        tagHidden: dress.isLooksOpen() && dress.isNarrow(), // phones: the tag (and its button) has slid away
+        lookbook,
         button: { left: Math.min(...xs), top: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) },
       };
     }
@@ -2272,5 +2324,6 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
   const takeNeedsRender = () => { const r = needsRender; needsRender = false; return r; };
   const stats = () => ({ ...renderer.info.render, ...renderer.info.memory }); // debug: draw calls, triangles, GPU objects
   const toggleLooks = () => { if (dress) dress.setLooksOpen(!dress.isLooksOpen()); };
-  return { render, resize, setPhases, takeNeedsRender, setCountdown, stats, toggleLooks };
+  const stepLook = (dir) => { if (dress?.isLooksOpen()) { dress.stepLook(dir); needsRender = true; } };
+  return { render, resize, setPhases, takeNeedsRender, setCountdown, stats, toggleLooks, stepLook };
 }

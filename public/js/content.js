@@ -92,12 +92,14 @@ export const CONTENT = {
       label: 'Дресс-код',
       title: 'Дресс-код',
       text: 'Дорогие гости, просим вас соблюсти цветовую гамму дресс-кода при выборе своего наряда',
-      colors: ['#FAF8B0', '#66C26A', '#EF8C0C', '#8A6E62', '#E8CDB0', '#8A2E0A'],
+      // palette (from the example looks): cream, sand, lemon cream, mustard, terracotta, olive, mocha, chocolate
+      colors: ['#EEE4CF', '#D6C2A3', '#EADF8E', '#C38B1E', '#A9472C', '#7A8436', '#8A5E3E', '#4B3324'],
+      bowColor: '#A9472C', // the bow in front of the ribbons
       women: 'Вечерние платья длины миди и макси, рубашки, длинные юбки и брюки',
       men: 'Рубашки, поло, брюки, пиджаки',
-      // Example looks shown in the gallery. Add your pictures to public/assets/dresscode/.
-      womenImages: ['assets/dresscode/women-1.jpg', 'assets/dresscode/women-2.jpg'],
-      menImages: ['assets/dresscode/men-1.jpg', 'assets/dresscode/men-2.jpg', 'assets/dresscode/men-3.jpg', 'assets/dresscode/men-4.jpg'],
+      // Example looks for the lookbook card (one at a time). Pictures are in public/assets/dresscode/.
+      womenImages: [1, 2, 3, 4, 5, 6, 7, 8].map((n) => `assets/dresscode/women-${n}.jpg`),
+      menImages: [1, 2, 3, 4, 5, 6].map((n) => `assets/dresscode/men-${n}.jpg`),
     },
     {
       type: 'details',

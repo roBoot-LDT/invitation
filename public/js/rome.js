@@ -425,7 +425,7 @@ function buildVineyards() {
 }
 
 // Marble pedestal for a statue; the statue itself (a Venus model) is loaded by scene.js and set on top.
-const PEDESTAL_TOP = 2.88;
+export const PEDESTAL_TOP = 2.88;
 function buildPedestal(marble) {
   const g = new THREE.Group();
   const pedestal = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.6, 2.6), marble);
@@ -446,10 +446,14 @@ function buildStatues(marble, roadAngle) {
     s.position.set(x, Math.max(0, heightAt(x, z)) - (r < PLAZA_R + 2 ? 0 : 0.3), z);
     s.rotation.y = Math.atan2(-x, -z); // facing the column
     g.add(s);
-    spots.push({ position: s.position.clone().setY(s.position.y + PEDESTAL_TOP), rotationY: s.rotation.y });
+    spots.push({ position: s.position.clone().setY(s.position.y + PEDESTAL_TOP), rotationY: s.rotation.y, pedestal: s });
   };
   // a single statue at the plaza's edge, beside the road to the Colosseum
   place(roadAngle - 0.62, PLAZA_R - 1.6);
+  // Phones see less around the column: there the statue stands in the open grass to the right of the column
+  // as seen from the countdown stop (camera at about (-9, 17.5, 2.6)), turned towards that camera.
+  const px = 44, pz = -3.6, py = Math.max(0, heightAt(px, pz)) - 0.3;
+  spots[0].phone = { position: new THREE.Vector3(px, py + PEDESTAL_TOP, pz), rotationY: Math.atan2(-9 - px, 2.6 - pz) };
   g.userData.statueSpots = spots;
   return g;
 }

@@ -274,9 +274,37 @@ function buildDressOverlay(scene) {
   btn.style.background = 'transparent'; btn.style.border = 'none';
   btn.addEventListener('click', () => scene.toggleLooks());
   $('tags').append(btn);
+  // the open lookbook card: left / right half turns the page (tap or swipe), the corner mark closes it
+  const place = (b, r) => Object.assign(b.style, { display: '', position: 'absolute', left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
+  const mkArea = (label, dir) => {
+    const b = el('button', 'venue-link');
+    b.type = 'button';
+    b.setAttribute('aria-label', label);
+    Object.assign(b.style, { background: 'transparent', border: 'none', touchAction: 'pan-y', display: 'none' });
+    let x0 = null;
+    b.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+    b.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0;
+      x0 = null;
+      scene.stepLook(Math.abs(dx) > 30 ? (dx < 0 ? 1 : -1) : dir); // swipe left = next, as in a photo gallery
+    });
+    $('tags').append(b);
+    return b;
+  };
+  const prev = mkArea('Предыдущий образ', -1), next = mkArea('Следующий образ', 1);
+  const close = el('button', 'venue-link');
+  close.type = 'button';
+  close.setAttribute('aria-label', 'Закрыть примеры образов');
+  Object.assign(close.style, { background: 'transparent', border: 'none', display: 'none' });
+  close.addEventListener('click', () => scene.toggleLooks());
+  $('tags').append(close);
   return (d) => {
-    btn.style.display = d?.visible ? '' : 'none';
-    if (d?.visible) Object.assign(btn.style, { position: 'absolute', left: `${d.button.left}px`, top: `${d.button.top}px`, width: `${d.button.width}px`, height: `${d.button.height}px` });
+    const showTag = d?.visible && !d.tagHidden;
+    btn.style.display = showTag ? '' : 'none';
+    if (showTag) Object.assign(btn.style, { position: 'absolute', left: `${d.button.left}px`, top: `${d.button.top}px`, width: `${d.button.width}px`, height: `${d.button.height}px` });
+    const lb = d?.visible ? d.lookbook : null;
+    if (lb) { place(prev, lb.prev); place(next, lb.next); place(close, lb.close); } else prev.style.display = next.style.display = close.style.display = 'none';
   };
 }
 
