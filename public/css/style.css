@@ -530,12 +530,12 @@ body.no3d #rsvp { padding-top: 40px; }
 @keyframes envIn { from { transform: translateY(70px) scale(.9); opacity: 0; } }
 .mini-env-layer { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
 .mini-env-layer.front { z-index: 3; }
-.mini-stack { position: absolute; z-index: 2; left: 20%; right: 20%; top: -62%; height: 92%; }
+.mini-stack { position: absolute; z-index: 2; left: 20%; right: 20%; top: -62%; height: 78%; }
 .mini-stack i { position: absolute; inset: 0; border-radius: 6px; border: 5px solid #9a7048; background: #3f3424; box-shadow: 0 3px 8px rgba(0, 0, 0, .3); }
 .mini-stack i:nth-child(1) { transform: rotate(-4deg) translate(-4px, 4px); }
 .mini-stack i:nth-child(2) { transform: rotate(3deg) translate(4px, 2px); }
 .rsvp-stage.sending .mini-stack { animation: stackIn .8s cubic-bezier(.5, 0, .3, 1) .7s both; }
-@keyframes stackIn { from { transform: translateY(-20%); opacity: 0; } 20% { opacity: 1; } to { transform: translateY(66%); } }
+@keyframes stackIn { from { transform: translateY(-20%); opacity: 0; } 20% { opacity: 1; } to { transform: translateY(91%); } } /* ends fully inside the envelope (top ≈ 9%, bottom ≈ 87%) */
 .mini-flap { position: absolute; inset: 0; z-index: 0; transform-origin: 50% 0; transform: rotateX(180deg); }
 .mini-flap svg { width: 100%; height: 100%; display: block; }
 .rsvp-stage.sealed .mini-flap { animation: flapClose .6s ease forwards; }
@@ -548,7 +548,7 @@ body.no3d #rsvp { padding-top: 40px; }
 .ink-thanks {
   position: absolute; left: 0; right: 0; top: 13%; margin: 0; font-family: var(--script); font-size: 13.2cqw; line-height: 1; color: #2c1d0c;
   text-shadow: 0 0 1px rgba(44, 29, 12, .5); /* a touch of ink bleed */
-  clip-path: inset(0 100% 0 0); /* revealed left to right, like a pen stroke */
+  clip-path: inset(-40% 100% -40% -10%); /* revealed left to right, like a pen stroke; extra room above for the tall script capitals */
 }
 .ink-note { position: absolute; left: 0; right: 0; top: 80%; margin: 0; font-family: var(--italic); font-style: italic; font-size: max(15px, 3.8cqw); color: #4a3a22; opacity: 0; }
 .ink-edit {
@@ -558,7 +558,7 @@ body.no3d #rsvp { padding-top: 40px; }
 }
 .rsvp-stage.sealed .ink-thanks { animation: inkWrite 1.1s steps(18, end) 1s forwards; }
 .rsvp-stage.sealed .ink-note, .rsvp-stage.sealed .ink-edit { animation: inkFade .6s ease 2.1s forwards; }
-@keyframes inkWrite { to { clip-path: inset(0 0 0 0); } }
+@keyframes inkWrite { to { clip-path: inset(-40% -10% -40% -10%); } }
 @keyframes inkFade { to { opacity: 1; } }
 /* returning guest: show the sealed envelope without replaying the animation */
 .rsvp-stage.instant *, .rsvp-stage.instant { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
