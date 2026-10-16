@@ -322,7 +322,7 @@ function buildStageNav(stages, onGo) {
   const fill = el('div', 'stage-fill');
   track.append(fill);
   const buttons = stages.map((st, i) => {
-    const b = el('button', 'stage-dot');
+    const b = el('button', st.quiet ? 'stage-dot quiet' : 'stage-dot'); // quiet: no label under it on phones
     b.type = 'button';
     b.setAttribute('aria-label', st.label);
     b.innerHTML = `<svg class="stage-ico" viewBox="0 0 24 24" aria-hidden="true">${NAV_ICONS[st.icon] || ''}</svg><span class="stage-label">${esc(st.label)}</span>`;
@@ -509,7 +509,7 @@ async function boot() {
     const STAGES = [
       { label: 'Приглашение', icon: 'envelope' },
       { label: 'До свадьбы', icon: 'hourglass' },
-      ...CONTENT.stops.map((st) => ({ label: st.label || st.title, icon: st.type })),
+      ...CONTENT.stops.map((st) => ({ label: st.label || st.title, icon: st.type, quiet: st.type === 'schedule' })),
       { label: 'Анкета', icon: 'tablet' },
     ];
     // Step points: one per stop, and one per hour on the clock. Each swipe / wheel turn moves exactly one point.

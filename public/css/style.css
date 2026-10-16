@@ -367,6 +367,7 @@ body.locked .stage-nav { opacity: 0; pointer-events: none; }
   .stage-track::before { right: 12px; bottom: auto; background: repeating-linear-gradient(80deg, #6b4f2a 0 5px, #8a6a3a 5px 8px, #5a7a2e 8px 10px); }
   .stage-fill { width: calc((100% - 24px) * var(--progress, 0)); height: 3px; transition: width .55s ease; }
   .stage-dot { width: 24px; height: 24px; }
+  .stage-dot.quiet .stage-label { display: none; } /* the clock has its own «Программа дня» plaque right there */
   .stage-ico { width: 13px; height: 13px; }
   .nav-leaf.l { transform: translateY(-5px) rotate(-60deg); }
   .nav-leaf.r { transform: translateY(5px) rotate(120deg); }

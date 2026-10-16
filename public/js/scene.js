@@ -467,7 +467,7 @@ function buildCloudCountdown(onReady) {
         x += gl.advance * S;
       }
       (row.groups || []).forEach((gr, gi) => {
-        layout.labels.push({ text: gr.label, pos: new THREE.Vector3((span[gi].min + span[gi].max) / 2, y - S * 0.2, 0) });
+        layout.labels.push({ text: gr.label, pos: new THREE.Vector3((span[gi].min + span[gi].max) / 2, y - S * 0.12, 0) });
       });
       y -= row.gap ?? gap; // a row may set its own spacing below it
     }
@@ -578,7 +578,7 @@ function buildHangingClock(cfg) {
   faceCanvas.width = faceCanvas.height = 1024;
   drawClockFace(faceCanvas, cfg.items, cfg.motto);
   const faceTex = new THREE.CanvasTexture(faceCanvas);
-  faceTex.colorSpace = THREE.SRGBColorSpace; faceTex.anisotropy = 8;
+  faceTex.colorSpace = THREE.SRGBColorSpace; faceTex.anisotropy = 16;
   const face = new THREE.Mesh(new THREE.CircleGeometry(CLOCK_R, 96), new THREE.MeshStandardMaterial({ map: faceTex, roughness: 0.45 }));
   face.position.z = 0.002;
   clock.add(face);
@@ -587,7 +587,7 @@ function buildHangingClock(cfg) {
   const textCanvas = document.createElement('canvas');
   textCanvas.width = 512; textCanvas.height = 256;
   const textTex = new THREE.CanvasTexture(textCanvas);
-  textTex.colorSpace = THREE.SRGBColorSpace; textTex.anisotropy = 8;
+  textTex.colorSpace = THREE.SRGBColorSpace; textTex.anisotropy = 16;
   const text = new THREE.Mesh(new THREE.PlaneGeometry(CLOCK_R * 1.05, CLOCK_R * 0.525), new THREE.MeshBasicMaterial({ map: textTex, transparent: true, toneMapped: false }));
   text.position.z = 0.006;
   clock.add(text);
@@ -827,7 +827,7 @@ function buildSignpost(venue) {
     canvas.width = Math.round(b.len * SIGN_PX); canvas.height = Math.round(b.h * SIGN_PX);
     paintBoard(canvas, b);
     const tex = new THREE.CanvasTexture(canvas);
-    tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+    tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 16;
     FONTS_READY.then(() => { paintBoard(canvas, b); tex.needsUpdate = true; });
     const face = new THREE.MeshStandardMaterial({ map: tex, roughness: b.map ? 0.65 : 0.85 });
     const mesh = new THREE.Mesh(geo, [face, b.map ? SIDE_GREEN : SIDE]);
@@ -857,7 +857,7 @@ function buildSignpost(venue) {
 
 // ---------- dress code: silk ribbons tied around the column ----------
 // Six satin ribbons (the palette) wrap the shaft, a bow in front, fluttering tails, and a paper tag with the text.
-const TAG_PX = 512;
+const TAG_PX = 1024; // canvas pixels per world unit: high, so the small text stays sharp on phones
 
 function wrapLines(g, text, maxW) {
   const words = text.split(' '), lines = [];
@@ -901,7 +901,7 @@ function paintTag(canvas, d, looksOpen = false) {
   g.textAlign = 'center'; g.textBaseline = 'middle';
   g.fillStyle = '#3b2a14'; g.font = `${S * 0.18}px ${FONT.script}`;
   g.fillText(d.title, cx, y); y += S * 0.16;
-  g.fillStyle = '#6b5a3e'; g.font = `italic 600 ${S * 0.078}px ${FONT.italic}`;
+  g.fillStyle = '#5a4a30'; g.font = `italic 700 ${S * 0.078}px ${FONT.italic}`;
   for (const ln of wrapLines(g, 'Просим вас соблюсти цветовую гамму', maxW)) { g.fillText(ln, cx, y); y += S * 0.088; }
   // palette dots
   y += S * 0.05;
@@ -916,7 +916,7 @@ function paintTag(canvas, d, looksOpen = false) {
     g.textAlign = 'center';
     g.fillStyle = '#3b2a14'; g.font = `${S * 0.125}px ${FONT.script}`;
     g.fillText(label, cx, y); y += S * 0.1;
-    g.fillStyle = '#2f2010'; g.font = `${S * 0.064}px ${FONT.bold}`;
+    g.fillStyle = '#22170a'; g.font = `${S * 0.066}px ${FONT.bold}`;
     for (const ln of wrapLines(g, text, maxW)) { g.fillText(ln, cx, y); y += S * 0.08; }
     y += S * 0.045;
   };
@@ -1082,7 +1082,7 @@ function buildRibbons(d) {
   canvas.width = Math.round(TW * TAG_PX); canvas.height = Math.round(TH * TAG_PX);
   let button = paintTag(canvas, d);
   const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 16;
   FONTS_READY.then(() => { button = paintTag(canvas, d, false); tex.needsUpdate = true; });
   const tag = new THREE.Mesh(new THREE.PlaneGeometry(TW, TH), new THREE.MeshStandardMaterial({ map: tex, transparent: true, alphaTest: 0.5, roughness: 0.9, side: THREE.DoubleSide }));
   const tagHolder = new THREE.Group();
@@ -1098,7 +1098,7 @@ function buildRibbons(d) {
   looksCanvas.width = Math.round(LW * TAG_PX); looksCanvas.height = Math.round(LH * TAG_PX);
   const images = { women: [], men: [] };
   const looksTex = new THREE.CanvasTexture(looksCanvas);
-  looksTex.colorSpace = THREE.SRGBColorSpace; looksTex.anisotropy = 8;
+  looksTex.colorSpace = THREE.SRGBColorSpace; looksTex.anisotropy = 16;
   const repaintLooks = () => { paintLooks(looksCanvas, d, images); looksTex.needsUpdate = true; };
   let photosRequested = false;
   const loadPhotos = () => { // only when a guest actually opens the card: saves 1–3 MB for everyone else
@@ -1184,7 +1184,7 @@ function buildRibbons(d) {
 
 // ---------- details: a trattoria chalkboard hanging on the column ----------
 // Slate board in a wooden frame, hung on a rope; grainy chalk lettering with icons; yellow chalk contacts.
-const CHALK_PX = 512;
+const CHALK_PX = 1024;
 const CHALK_FONT = FONT.script;
 
 // draws chalk-textured content: paint(ctx) on a scratch canvas, then eat away specks so it looks grainy
@@ -1250,10 +1250,10 @@ function paintChalkboard(canvas, d) {
     // heading
     c.fillStyle = WHITE; c.strokeStyle = WHITE;
     c.textAlign = 'center';
-    c.font = `${S * 0.2}px ${CHALK_FONT}`;
-    c.fillText(d.title, W / 2, S * 0.24);
+    c.font = `${S * 0.18}px ${CHALK_FONT}`;
+    c.fillText(d.title, W / 2 - S * 0.14, S * 0.21); // a little left of centre: the photo sits in the right corner
     c.lineWidth = S * 0.012;
-    c.beginPath(); c.moveTo(W / 2 - S * 0.42, S * 0.37); c.quadraticCurveTo(W / 2, S * 0.4, W / 2 + S * 0.42, S * 0.35); c.stroke();
+    c.beginPath(); c.moveTo(W / 2 - S * 0.54, S * 0.33); c.quadraticCurveTo(W / 2 - S * 0.14, S * 0.36, W / 2 + S * 0.26, S * 0.31); c.stroke();
     // notes with icons
     // the list shrinks until it fits between the title and the contacts block
     const wrap = (text) => {
@@ -1263,12 +1263,12 @@ function paintChalkboard(canvas, d) {
       lines.push(line);
       return lines;
     };
-    const top = S * 0.68, bottom = H - S * 0.66; // top: below the title and the corner photo
-    let fs = S * 0.078, laid;
+    const top = S * 0.62, bottom = H - S * 0.6; // top: below the title and the corner photo
+    let fs = S * 0.11, laid; // as large as fits
     for (;;) {
-      c.font = `italic 500 ${fs}px ${FONT.italic}`; // small lines: italic, script is too thin to read here
+      c.font = `italic 600 ${fs}px ${FONT.italic}`; // small lines: italic, script is too thin to read here
       laid = d.chalk.map((item) => wrap(item.text));
-      const h = laid.reduce((sum, ls) => sum + ls.length * fs * 1.36, 0) + (laid.length - 1) * fs * 0.9;
+      const h = laid.reduce((sum, ls) => sum + ls.length * fs * 1.26, 0) + (laid.length - 1) * fs * 0.75;
       if (top + h <= bottom || fs < S * 0.05) break;
       fs -= S * 0.003;
     }
@@ -1277,8 +1277,8 @@ function paintChalkboard(canvas, d) {
     d.chalk.forEach((item, k) => {
       c.strokeStyle = WHITE;
       chalkIcon(c, item.icon, pad + S * 0.08, y + S * 0.02, S * 0.13);
-      laid[k].forEach((ln, i) => c.fillText(ln, pad + S * 0.22, y + i * fs * 1.36));
-      y += laid[k].length * fs * 1.36 + fs * 0.9;
+      laid[k].forEach((ln, i) => c.fillText(ln, pad + S * 0.22, y + i * fs * 1.26));
+      y += laid[k].length * fs * 1.26 + fs * 0.75;
     });
     y = Math.max(y, bottom - fs * 0.2);
     // dashed chalk divider
@@ -1333,7 +1333,7 @@ function buildChalkboard(d) {
   canvas.width = Math.round(BW * CHALK_PX); canvas.height = Math.round(BH * CHALK_PX);
   let areas = paintChalkboard(canvas, d);
   const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 16;
   FONTS_READY.then(() => { areas = paintChalkboard(canvas, d); tex.needsUpdate = true; });
   const slate = new THREE.Mesh(new THREE.PlaneGeometry(BW, BH), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.95 }));
   slate.position.z = DEPTH * 0.4;
@@ -1503,7 +1503,7 @@ function buildPlaque(text, w, h, style) {
   };
   paint();
   const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 16;
   FONTS_READY.then(() => { paint(); tex.needsUpdate = true; });
   const mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, alphaTest: 0.5, roughness: style === 'bronze' ? 0.35 : 0.85, metalness: style === 'bronze' ? 0.6 : 0 });
   const g = new THREE.Group();
@@ -1629,6 +1629,9 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
   const stopCount = stops.length;
   if (columnModel?.shaft || columnModel?.stretchBand) taper = 0;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  // Phones render at the screen's own sharpness (up to 3x) so the small text on the tag and the chalkboard is crisp;
+  // a phone that can't keep up while moving drops to 2x (see render()).
+  let prCap = 3, slowFrames = 0, lastRenderAt = 0;
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1795,7 +1798,7 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     const g = (p) => ({ text: String(p.value), label: p.label });
     // «До свадьбы осталось» is written in clouds too (two lines on phones)
     const rows = view.portrait
-      ? [{ text: 'До свадьбы', size: 0.12, gap: 0.13 }, { text: 'осталось', size: 0.12, gap: 0.8 }, { groups: [g(days)], size: 0.72 }, { groups: [g(hours), g(minutes), g(seconds)], size: 0.3 }]
+      ? [{ text: 'До свадьбы', size: 0.12, gap: 0.13 }, { text: 'осталось', size: 0.12, gap: 0.8 }, { groups: [g(days)], size: 0.72, gap: 0.78 }, { groups: [g(hours), g(minutes), g(seconds)], size: 0.3 }]
       : [{ text: 'До свадьбы осталось', size: 0.144, gap: 0.65 }, { groups: [g(days), g(hours), g(minutes), g(seconds)], size: 0.52 }];
     if (countdown.set(rows, view.portrait ? 0.5 : 0.3)) needsRender = true;
   }
@@ -1920,7 +1923,7 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     cb.group.rotation.y = Math.PI / 2 - angle;
     cb.group.rotateX(-0.05); // hanging slightly forward from its rope
     const boardPhoto = buildPolaroid(stops[boardIndex].photo, 0.6, 0.69, 'tape');
-    boardPhoto.position.set(0.55, 0.88, 0.1); // the tape on its top edge sits on the board's frame
+    boardPhoto.position.set(0.6, 0.93, 0.1); // the tape on its top edge sits on the board's frame
     boardPhoto.rotation.z = -0.14;
     cb.group.add(boardPhoto);
     scene.add(cb.group);
@@ -1944,7 +1947,7 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
   function crownPose() {
     const first = stopPose(stopTs[0]);
     return view.portrait
-      ? pose(first.a - 0.5, 9.0, dims.capTop + 0.6, dims.capTop + 1.6)
+      ? pose(first.a - 0.5, 9.4, dims.capTop + 0.75, dims.capTop + 1.85)
       : pose(first.a - 0.5, 7.0, dims.capTop + 0.3, dims.capTop + 0.95);
   }
   // looking slightly upwards so the city below stays out of the intro
@@ -2055,7 +2058,7 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     view.w = w; view.h = h; view.portrait = w < 760 || h > w * 1.1;
     dial?.placeCameo?.(view.portrait);
     dress?.setNarrow?.(view.portrait);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, view.portrait ? 2 : 1.75)); // phones: 2, or small text on the boards blurs
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, view.portrait ? prCap : 1.75)); // phones: the screen's own sharpness
     renderer.setSize(w, h, false);
     blur?.setSize();
     camera.aspect = w / h;
@@ -2101,6 +2104,12 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
   }
 
   function render(p, introFrames) {
+    const now = performance.now(), dt = now - lastRenderAt;
+    lastRenderAt = now;
+    if (view.portrait && prCap > 2 && dt < 200) { // dt >= 200: the scene was idle, not slow
+      slowFrames = dt > 30 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
+      if (slowFrames > 45) { prCap = 2; resize(); }
+    }
     const state = cameraAt(p);
     if (dial && state.dialShadow !== null && state.dialShadow !== undefined) dial.setHand(state.dialShadow);
     camera.position.copy(camPos);
