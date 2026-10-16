@@ -579,6 +579,37 @@ body.no3d #rsvp { padding-top: 40px; }
   .cloud-photo.right { margin-top: 5vw; }
 }
 
+/* phones: the whole invitation (names, photos, date, greeting) fits on the first screen;
+   the scroll cue is just the round button, with room kept for it at the bottom */
+@media (max-width: 760px) {
+  #intro { justify-content: flex-start; padding: 86px 14px calc(78px + env(safe-area-inset-bottom)); }
+  .eyebrow { font-size: 14px; letter-spacing: .32em; gap: 10px; margin: 0 0 1.2svh; white-space: nowrap; }
+  .eyebrow-line { width: 34px; }
+  .eyebrow-line:last-child { margin-left: -.32em; }
+  .intro-row { gap: 1.2svh 6vw; }
+  .intro-center { margin-bottom: 0; }
+  /* sizes follow both the width and the height, so short phones (iPhone SE) still fit everything */
+  .names { font-size: clamp(40px, min(14vw, 8.2svh), 76px); }
+  .cloud-photo { width: min(29vw, 17svh, 150px); }
+  .cloud-photo.right { margin-top: 3vw; }
+  .date { font-size: clamp(32px, min(10.5vw, 6.8svh), 52px); margin-top: 2.4svh; }
+  .greeting { font-size: clamp(24px, min(7.4vw, 5svh), 34px); margin: 1.8svh 0 2px; }
+  .greeting-text { font-size: 17px; line-height: 1.35; }
+  #scroll-cue { bottom: max(12px, env(safe-area-inset-bottom)); gap: 0; }
+  #scroll-cue #hint { display: none; }
+  .cue-circle { width: 50px; height: 50px; }
+  .cue-circle i:first-child { top: 10px; }
+  .cue-circle i:last-child { top: 18px; }
+}
+@media (max-width: 760px) and (max-height: 620px) {
+  #intro { padding-top: 80px; padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
+  .eyebrow { margin-bottom: .6svh; }
+  .greeting-text { font-size: 16px; }
+  .cue-circle { width: 44px; height: 44px; }
+  .cue-circle i:first-child { top: 8px; }
+  .cue-circle i:last-child { top: 15px; }
+}
+
 @media (max-width: 640px) {
   body { font-size: 18px; }
   .tag-card h3 { font-size: 28px; }
