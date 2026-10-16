@@ -584,19 +584,19 @@ body.no3d #rsvp { padding-top: 40px; }
 /* phones: the whole invitation (names, photos, date, greeting) fits on the first screen;
    the scroll cue is just the round button, with room kept for it at the bottom */
 @media (max-width: 760px) {
-  #intro { justify-content: flex-start; padding: 86px 14px calc(78px + env(safe-area-inset-bottom)); }
+  #intro { justify-content: flex-start; padding: 82px 14px calc(76px + env(safe-area-inset-bottom)); }
   .eyebrow { font-size: 14px; letter-spacing: .32em; gap: 10px; margin: 0 0 1.2svh; white-space: nowrap; }
   .eyebrow-line { width: 34px; }
   .eyebrow-line:last-child { margin-left: -.32em; }
   .intro-row { gap: 1.2svh 6vw; }
   .intro-center { margin-bottom: 0; }
   /* sizes follow both the width and the height, so short phones (iPhone SE) still fit everything */
-  .names { font-size: clamp(40px, min(14vw, 8.2svh), 76px); }
-  .cloud-photo { width: min(33vw, 18.5svh, 170px); }
+  .names { font-size: clamp(38px, min(12.6vw, 7.3svh), 70px); }
+  .cloud-photo { width: min(40vw, 23svh, 210px); }
   .frame { padding: 10.5%; } /* a slightly slimmer gold border leaves more room for the photo */
-  .cloud-photo.right { margin-top: 3vw; }
-  .date { font-size: clamp(32px, min(10.5vw, 6.8svh), 52px); margin-top: 2.4svh; }
-  .greeting { font-size: clamp(24px, min(7.4vw, 5svh), 34px); margin: 1.8svh 0 2px; }
+  .cloud-photo.right { margin-top: 2vw; }
+  .date { font-size: clamp(32px, min(10.5vw, 6.8svh), 52px); margin-top: 1.4svh; }
+  .greeting { font-size: clamp(24px, min(7.4vw, 5svh), 34px); margin: 1.1svh 0 2px; }
   .greeting-text { font-size: 17px; line-height: 1.35; }
   #scroll-cue { bottom: max(12px, env(safe-area-inset-bottom)); gap: 0; }
   #scroll-cue #hint { display: none; }
@@ -608,7 +608,7 @@ body.no3d #rsvp { padding-top: 40px; }
   #intro { padding-top: 80px; padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
   .eyebrow { margin-bottom: .6svh; }
   .greeting-text { font-size: 16px; }
-  .cloud-photo { width: min(33vw, 16svh, 170px); } /* short phones: keep the text clear of the scroll button */
+  .cloud-photo { width: min(40vw, 19.6svh, 210px); } /* short phones: keep the text clear of the scroll button */
   .cue-circle { width: 44px; height: 44px; }
   .cue-circle i:first-child { top: 8px; }
   .cue-circle i:last-child { top: 15px; }
