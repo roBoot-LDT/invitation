@@ -1967,13 +1967,13 @@ export function createScene(canvas, { stops, columnModel, colosseumModel, statue
     // the whole clock (with its chains) centred on screen; on phones the view is shifted up by 20%,
     // so the camera aims above the clock to bring it back to the middle
     return view.portrait
-      ? pose(dial.angle, 6.4, dial.y + 1.05, dial.y + 1.25)
+      ? pose(dial.angle, 5.8, dial.y + 0.55, dial.y + 0.65) // phones: the dial fills the width, the photo below fits
       : pose(dial.angle, 5.2, dial.y + 0.3, dial.y + 0.25);
   }
-  // Camera facing the signpost; far enough back that the boards' tips fit on a phone screen.
+  // Camera facing the signpost. On phones the text fills the width; the arrow tips may run off the edges.
   function signPose() {
     return view.portrait
-      ? pose(sign.angle, 10.2, sign.y + 1.2, sign.y + 1.45)
+      ? pose(sign.angle - 0.08, 9.2, sign.y + 0.75, sign.y + 0.95)
       : pose(sign.angle, 6.9, sign.y + 0.05, sign.y - 0.12); // low enough to include the photo under the boards
   }
   // Camera facing the bow and the tag hanging under it.
