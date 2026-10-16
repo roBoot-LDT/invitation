@@ -189,8 +189,9 @@ body.locked #scroll-cue { opacity: 0; }
   background: linear-gradient(135deg, #8a6419, #f4dc92 35%, #a07624 65%, #f0d488);
   box-shadow: 0 0 0 1.5px #5a3f0c, inset 0 0 0 1.5px #5a3f0c;
 }
-.frame-mat { padding: 8%; background: #f5eedc; box-shadow: inset 0 3px 10px rgba(60, 40, 10, .5), inset 0 0 0 1px rgba(60, 40, 10, .25); }
-.frame-mat img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: #efe6d2; box-shadow: 0 0 0 1px rgba(60, 40, 10, .35), 0 2px 6px rgba(60, 40, 10, .3); }
+.frame-mat { position: relative; } /* no mat: the photo fills the frame */
+.frame-mat::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 3px 10px rgba(40, 25, 5, .45); } /* the frame's shadow falling on the photo */
+.frame-mat img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: #efe6d2; }
 .orn { position: absolute; width: 31%; height: auto; aspect-ratio: 1; pointer-events: none; filter: drop-shadow(0 2px 2px rgba(50, 30, 5, .45)); }
 .orn.tl { top: -2.5%; left: -3%; }
 .orn.tr { top: -2.5%; right: -3%; transform: scaleX(-1); }
@@ -591,7 +592,8 @@ body.no3d #rsvp { padding-top: 40px; }
   .intro-center { margin-bottom: 0; }
   /* sizes follow both the width and the height, so short phones (iPhone SE) still fit everything */
   .names { font-size: clamp(40px, min(14vw, 8.2svh), 76px); }
-  .cloud-photo { width: min(29vw, 17svh, 150px); }
+  .cloud-photo { width: min(33vw, 18.5svh, 170px); }
+  .frame { padding: 10.5%; } /* a slightly slimmer gold border leaves more room for the photo */
   .cloud-photo.right { margin-top: 3vw; }
   .date { font-size: clamp(32px, min(10.5vw, 6.8svh), 52px); margin-top: 2.4svh; }
   .greeting { font-size: clamp(24px, min(7.4vw, 5svh), 34px); margin: 1.8svh 0 2px; }
@@ -606,6 +608,7 @@ body.no3d #rsvp { padding-top: 40px; }
   #intro { padding-top: 80px; padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
   .eyebrow { margin-bottom: .6svh; }
   .greeting-text { font-size: 16px; }
+  .cloud-photo { width: min(33vw, 16svh, 170px); } /* short phones: keep the text clear of the scroll button */
   .cue-circle { width: 44px; height: 44px; }
   .cue-circle i:first-child { top: 8px; }
   .cue-circle i:last-child { top: 15px; }
