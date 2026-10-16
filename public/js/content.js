@@ -15,7 +15,7 @@ export const CONTENT = {
   // Photos in museum frames on the clouds (portrait 3:4 works best). Drop files into public/assets/photos/.
   photos: [
     { src: 'assets/photos/couple-1.jpg', alt: 'Аня и Максим' },
-    { src: 'assets/photos/couple-3.jpg', alt: 'Аня и Максим' },
+    { src: 'assets/photos/couple-4.jpg', alt: 'Аня и Максим' },
   ],
 
   // Background music: the first format the browser can play is used (.ogg for most, .mp3 for older iPhones).
