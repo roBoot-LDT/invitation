@@ -1,4 +1,2 @@
-intermezzo.ogg — P. Mascagni, Cavalleria rusticana: Intermezzo sinfonico.
-Fulda Symphonic Orchestra, cond. Simon Schindler. EFF Open Audio License v1 (attribution kept in the page footer).
-Source: https://commons.wikimedia.org/wiki/File:Pietro_Mascagni_-_Cavalleria_Rusticana_-_Intermezzo_Sinfonico.ogg
-Optional: add intermezzo.mp3 (same track) for older iPhones.
+sara-perche-ti-amo.mp3 — Ricchi e Poveri, «Sarà perché ti amo» (1981).
+Background music of the invitation; the credit line is shown in the page footer (content.js → musicCredit).

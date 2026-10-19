@@ -21,7 +21,7 @@ Admin panel: http://localhost:3000/admin — login `anna`, password `maks` (chan
 | Guests and personal links | `data/guests.json` (no restart needed) |
 | Couple photos | `public/assets/photos/` + paths in `content.js` |
 | Small photo at each stop (cameos / polaroids) | `public/assets/photos/stop-schedule.jpg`, `stop-venue.jpg`, `stop-details-2.jpg` — file names are set in `content.js`; when you replace a photo, give it a new name so browsers don't keep showing the old one from their cache |
-| Music | `public/assets/music/music.mp3` |
+| Music | `public/assets/music/sara-perche-ti-amo.mp3` + `music` / `musicCredit` in `content.js` (MP3 plays everywhere) |
 | Blender column | `public/assets/models/column.glb` (Y-up; auto-scaled and centred) |
 | Dress-code example photos | `public/assets/dresscode/` (file names listed in `content.js`) |
 

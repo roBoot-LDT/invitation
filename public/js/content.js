@@ -18,10 +18,10 @@ export const CONTENT = {
     { src: 'assets/photos/couple-4.jpg', alt: 'Аня и Максим' },
   ],
 
-  // Background music: the first format the browser can play is used (.ogg for most, .mp3 for older iPhones).
-  music: ['assets/music/intermezzo.ogg', 'assets/music/intermezzo.mp3'],
+  // Background music (MP3 plays in every browser, older iPhones included).
+  music: ['assets/music/sara-perche-ti-amo.mp3'],
   // Required by the recording's licence (EFF Open Audio License) — shown in the footer.
-  musicCredit: 'Музыка: П. Масканьи — Интермеццо из оперы «Сельская честь». Fulda Symphonic Orchestra, дирижёр Simon Schindler (EFF Open Audio License)',
+  musicCredit: 'Музыка: Ricchi e Poveri — «Sarà perché ti amo»',
 
   // 3D column (.glb). Two ways to fit a model to the scene height:
   //  - `shaft`: name of the column-body mesh, stretched to the scene height (top and base keep proportions);
@@ -85,7 +85,7 @@ export const CONTENT = {
       addressLine1: 'Московская обл., г.о. Щёлково',
       addressLine2: 'г. Фрязино, д. Гребнево',
       address: 'Московская обл., городской округ Щёлково, г. Фрязино, д. Гребнево',
-      mapUrl: 'https://yandex.ru/maps/-/CXBTVFyo',
+      mapUrl: 'https://yandex.com/maps/-/CXFUmMja',
     },
     {
       type: 'dresscode',
