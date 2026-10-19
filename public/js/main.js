@@ -486,8 +486,15 @@ async function boot() {
 
   document.body.classList.add('locked');
   // The seal breaks, the envelope fades out and the sky intro (already in place underneath) is revealed.
+  // ?share: the closed envelope with the names and the date — only used to make the link preview picture
+  // (tools/make-share-image.mjs takes a screenshot of it); guests never get this link
+  const SHARE = new URLSearchParams(location.search).has('share');
+  if (SHARE) {
+    document.body.classList.add('share-shot');
+    document.querySelector('.gate-hint').textContent = CONTENT.dateLabel;
+  }
   initGate({
-    greeting: guest?.greeting || 'Дорогой гость!',
+    greeting: SHARE ? `${CONTENT.couple.bride} & ${CONTENT.couple.groom}` : guest?.greeting || 'Дорогой гость!',
     onOpen: playMusic,
     onDone: () => {
       document.body.classList.remove('locked');

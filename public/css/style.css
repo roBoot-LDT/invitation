@@ -86,6 +86,10 @@ main { position: relative; z-index: 2; }
   text-align: center; font-family: var(--italic); font-style: italic; font-size: clamp(17px, 2.4vw, 21px); color: var(--ink-soft);
 }
 .gate-to, .gate-hint { transition: opacity .35s ease; }
+/* link-preview screenshot (?share): the date under the seal in the bold face instead of the tap hint */
+.share-shot .gate-hint { font-family: var(--bold); font-style: normal; font-size: 46px; letter-spacing: .06em; color: var(--olive); bottom: 9vh; }
+.share-shot .gate-to { font-size: 88px; transform: translateY(-26px); }
+.share-shot #scroll-cue, .share-shot #mute, .share-shot .stage-nav { display: none !important; }
 
 /* wax seal on the flap's point; two halves so it can crack apart */
 .seal {
