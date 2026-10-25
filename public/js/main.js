@@ -395,7 +395,7 @@ function renderFlat() {
 
 // Each stop along the vine; the sundial gets more scroll room so its shadow can visit all marks.
 const STOP_SPECS = CONTENT.stops.map((st) => {
-  if (st.type === 'schedule') return { kind: 'dial', weight: 1.6, photo: st.photo, dial: { items: st.items, motto: st.motto, title: st.title } };
+  if (st.type === 'schedule') return { kind: 'dial', weight: 2, photo: st.photo, dial: { items: st.items, motto: st.motto, title: st.title } };
   if (st.type === 'venue') return { kind: 'sign', weight: 1, photo: st.photo, sign: st };
   if (st.type === 'dresscode') return { kind: 'ribbons', weight: 1, photo: st.photo, ribbons: st };
   if (st.type === 'details') return { kind: 'chalkboard', weight: 1, photo: st.photo, chalkboard: st };

@@ -14,6 +14,7 @@ const DATA_DIR = path.join(__dirname, 'data');
 const GUESTS_FILE = path.join(DATA_DIR, 'guests.json');
 const DB_FILE = path.join(DATA_DIR, 'rsvp.sqlite');
 
+const DISHES = ['Рыба', 'Мясо', 'Курица']; // keep in sync with rsvp.dishes in public/js/content.js
 const DRINKS = ['Шампанское', 'Вино красное', 'Вино белое', 'Водка', 'Виски', 'Коньяк', 'Что-то безалкогольное'];
 
 
@@ -56,17 +57,21 @@ db.exec(`
   );
   CREATE UNIQUE INDEX IF NOT EXISTS responses_slug_name ON responses(slug, name) WHERE slug IS NOT NULL;
 `);
+// added later: the main-course choice (older databases get the column here, existing answers are kept)
+if (!db.prepare('PRAGMA table_info(responses)').all().some((c) => c.name === 'dish')) {
+  db.exec("ALTER TABLE responses ADD COLUMN dish TEXT NOT NULL DEFAULT ''");
+}
 
 const upsertForGuest = db.prepare(`
-  INSERT INTO responses (slug, name, attending, drinks, allergy, transfer, created_at, updated_at)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO responses (slug, name, attending, dish, drinks, allergy, transfer, created_at, updated_at)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   ON CONFLICT(slug, name) WHERE slug IS NOT NULL DO UPDATE SET
-    attending = excluded.attending, drinks = excluded.drinks, allergy = excluded.allergy,
+    attending = excluded.attending, dish = excluded.dish, drinks = excluded.drinks, allergy = excluded.allergy,
     transfer = excluded.transfer, updated_at = excluded.updated_at
 `);
 const insertAnonymous = db.prepare(`
-  INSERT INTO responses (slug, name, attending, drinks, allergy, transfer, created_at, updated_at)
-  VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO responses (slug, name, attending, dish, drinks, allergy, transfer, created_at, updated_at)
+  VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 const selectBySlug = db.prepare('SELECT * FROM responses WHERE slug = ? ORDER BY id');
 const selectAll = db.prepare('SELECT * FROM responses ORDER BY updated_at DESC');
@@ -75,6 +80,7 @@ function rowToAnswer(r) {
   return {
     name: r.name,
     attending: r.attending === 1,
+    dish: r.dish || null,
     drinks: JSON.parse(r.drinks),
     allergy: r.allergy,
     transfer: r.transfer === null ? null : r.transfer === 1,
@@ -86,13 +92,15 @@ function cleanAnswer(raw, fixedName) {
   const name = String(fixedName ?? raw?.name ?? '').trim().slice(0, 120);
   if (!name) throw new Error('Укажите имя и фамилию');
   if (typeof raw?.attending !== 'boolean') throw new Error(`${name}: отметьте, сможете ли вы прийти`);
-  if (!raw.attending) return { name, attending: false, drinks: [], allergy: '', transfer: null };
+  if (!raw.attending) return { name, attending: false, dish: '', drinks: [], allergy: '', transfer: null };
+
+  if (!DISHES.includes(raw.dish)) throw new Error(`${name}: выберите горячее блюдо`);
 
   const drinks = Array.isArray(raw.drinks) ? raw.drinks.filter((d) => DRINKS.includes(d)) : [];
   if (drinks.length === 0) throw new Error(`${name}: выберите хотя бы один напиток`);
   if (typeof raw.transfer !== 'boolean') throw new Error(`${name}: ответьте про обратный трансфер`);
   const allergy = String(raw.allergy ?? '').trim().slice(0, 500);
-  return { name, attending: true, drinks: [...new Set(drinks)], allergy, transfer: raw.transfer };
+  return { name, attending: true, dish: raw.dish, drinks: [...new Set(drinks)], allergy, transfer: raw.transfer };
 }
 
 // ---------- app ----------
@@ -133,7 +141,7 @@ app.post('/api/rsvp', (req, res) => {
       db.exec('BEGIN');
       try {
         for (const a of clean) {
-          upsertForGuest.run(slug, a.name, a.attending ? 1 : 0, JSON.stringify(a.drinks), a.allergy,
+          upsertForGuest.run(slug, a.name, a.attending ? 1 : 0, a.dish, JSON.stringify(a.drinks), a.allergy,
             a.transfer === null ? null : a.transfer ? 1 : 0, now, now);
         }
         db.exec('COMMIT');
@@ -143,7 +151,7 @@ app.post('/api/rsvp', (req, res) => {
       }
     } else {
       const a = cleanAnswer(answers[0]);
-      insertAnonymous.run(a.name, a.attending ? 1 : 0, JSON.stringify(a.drinks), a.allergy,
+      insertAnonymous.run(a.name, a.attending ? 1 : 0, a.dish, JSON.stringify(a.drinks), a.allergy,
         a.transfer === null ? null : a.transfer ? 1 : 0, now, now);
     }
     res.json({ ok: true });
@@ -174,6 +182,7 @@ app.get('/admin', requireAdmin, (req, res) => {
   const base = `${req.protocol}://${req.get('host')}`;
 
   const coming = rows.filter((r) => r.attending === 1);
+  const dishCounts = DISHES.map((d) => [d, coming.filter((r) => r.dish === d).length]);
   const drinkCounts = DRINKS.map((d) => [d, coming.filter((r) => JSON.parse(r.drinks).includes(d)).length]);
   const totalInvited = Object.values(guests).reduce((n, g) => n + (g.members?.length || 0), 0);
 
@@ -185,7 +194,7 @@ app.get('/admin', requireAdmin, (req, res) => {
 
   const answerRows = rows.map((r) => `<tr><td>${esc(r.name)}</td><td>${esc(r.slug || '(общая ссылка)')}</td>
     <td class="${r.attending ? 'ok' : 'warn'}">${r.attending ? 'Придёт' : 'Не придёт'}</td>
-    <td>${esc(JSON.parse(r.drinks).join(', '))}</td><td>${esc(r.allergy)}</td><td>${yesNo(r.transfer === null ? null : r.transfer === 1)}</td>
+    <td>${esc(r.dish || '')}</td><td>${esc(JSON.parse(r.drinks).join(', '))}</td><td>${esc(r.allergy)}</td><td>${yesNo(r.transfer === null ? null : r.transfer === 1)}</td>
     <td>${esc(new Date(r.updated_at).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' }))}</td></tr>`).join('');
 
   res.send(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -203,19 +212,20 @@ a.btn{display:inline-block;padding:8px 14px;background:#6e7f3a;color:#fff;border
   <div class="stat"><b>${rows.length - coming.length}</b>не придут</div>
   <div class="stat"><b>${totalInvited}</b>приглашено по списку</div>
   <div class="stat"><b>${coming.filter((r) => r.transfer === 1).length}</b>нужен трансфер</div>
+  ${dishCounts.map(([d, n]) => `<div class="stat"><b>${n}</b>горячее: ${esc(d.toLowerCase())}</div>`).join('')}
   ${drinkCounts.map(([d, n]) => `<div class="stat"><b>${n}</b>${esc(d)}</div>`).join('')}
 </div>
 <p><a class="btn" href="/admin/export.csv">Скачать CSV (Excel)</a></p>
-<h2>Ответы</h2><div class="wrap"><table><tr><th>Имя</th><th>Ссылка</th><th>Участие</th><th>Напитки</th><th>Аллергия</th><th>Трансфер</th><th>Обновлено</th></tr>${answerRows || '<tr><td colspan="7">Пока нет ответов</td></tr>'}</table></div>
+<h2>Ответы</h2><div class="wrap"><table><tr><th>Имя</th><th>Ссылка</th><th>Участие</th><th>Горячее</th><th>Напитки</th><th>Аллергия</th><th>Трансфер</th><th>Обновлено</th></tr>${answerRows || '<tr><td colspan="8">Пока нет ответов</td></tr>'}</table></div>
 <h2>Приглашения</h2><div class="wrap"><table><tr><th>Гости</th><th>Персональная ссылка</th><th>Статус</th></tr>${guestRows}</table></div>
 </body></html>`);
 });
 
 app.get('/admin/export.csv', requireAdmin, (req, res) => {
   const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const lines = [['Имя', 'Ссылка', 'Участие', 'Напитки', 'Аллергия', 'Трансфер', 'Обновлено'].map(cell).join(';')];
+  const lines = [['Имя', 'Ссылка', 'Участие', 'Горячее', 'Напитки', 'Аллергия', 'Трансфер', 'Обновлено'].map(cell).join(';')];
   for (const r of selectAll.all()) {
-    lines.push([r.name, r.slug || '', r.attending ? 'Придёт' : 'Не придёт', JSON.parse(r.drinks).join(', '), r.allergy,
+    lines.push([r.name, r.slug || '', r.attending ? 'Придёт' : 'Не придёт', r.dish || '', JSON.parse(r.drinks).join(', '), r.allergy,
       yesNo(r.transfer === null ? null : r.transfer === 1), r.updated_at].map(cell).join(';'));
   }
   res.set('Content-Type', 'text/csv; charset=utf-8');

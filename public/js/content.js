@@ -70,6 +70,7 @@ export const CONTENT = {
         { time: '15:00', roman: 'XV', title: 'Сбор гостей' },
         { time: '16:00', roman: 'XVI', title: 'Церемония' },
         { time: '17:00', roman: 'XVII', title: 'Банкет' },
+        { time: '21:30', roman: 'XXI', title: 'Свадебный торт' },
         { time: '23:00', roman: 'XXIII', title: 'Завершение' },
       ],
     },
@@ -127,6 +128,7 @@ export const CONTENT = {
     title: 'Анкета гостя',
     subtitle: 'Ваши ответы на вопросы очень помогут нам в организации торжества',
     deadline: 'Ждём ваши ответы до 01 мая 2027',
+    dishes: ['Рыба', 'Мясо', 'Курица'], // main course choice (keep in sync with DISHES in server.js)
     drinks: ['Шампанское', 'Вино красное', 'Вино белое', 'Водка', 'Виски', 'Коньяк', 'Что-то безалкогольное'],
     thanks: 'Ваши ответы сохранены. Если что-то изменится — просто отправьте анкету ещё раз.',
   },

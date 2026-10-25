@@ -497,7 +497,10 @@ function buildCloudCountdown(onReady) {
 const CLOCK_R = 0.8;     // face radius (world units)
 const CLOCK_DEPTH = 0.09;
 
-const hourAngle = (time) => ((parseInt(time, 10) % 12) / 12) * Math.PI * 2; // clockwise from 12 o'clock
+const hourAngle = (time) => { // clockwise from 12 o'clock; minutes count, so 21:30 sits between IX and X
+  const [h, m = 0] = time.split(':').map(Number);
+  return (((h % 12) + m / 60) / 12) * Math.PI * 2;
+};
 const ROMAN = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
 
 function drawClockFace(canvas, items, motto) {
@@ -549,7 +552,9 @@ function drawClockText(canvas, item) {
   g.textAlign = 'center'; g.textBaseline = 'middle';
   g.font = `${H * 0.38}px ${FONT.bold}`;
   g.fillStyle = '#5f6f2c'; g.fillText(item.time, W / 2, H * 0.3);
-  g.font = `${H * 0.36}px ${FONT.script}`;
+  let fs = H * 0.36;
+  g.font = `${fs}px ${FONT.script}`;
+  while (g.measureText(item.title).width > W * 0.92 && fs > H * 0.2) { fs -= 2; g.font = `${fs}px ${FONT.script}`; }
   g.fillStyle = '#3b2a14'; g.fillText(item.title, W / 2, H * 0.74);
 }
 

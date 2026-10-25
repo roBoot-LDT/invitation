@@ -23,6 +23,9 @@ const ICON = {
   person: '<circle cx="12" cy="8" r="3.6"/><path d="M5 20.5c.8-3.9 3.6-6 7-6s6.2 2.1 7 6"/>',
   bus: '<rect x="4.5" y="4" width="15" height="13" rx="2.5"/><path d="M4.5 11h15M8 17v2.5M16 17v2.5"/><circle cx="8" cy="14.2" r=".9"/><circle cx="16" cy="14.2" r=".9"/>',
   noBus: '<path d="M5 12h14"/><path d="M8 8l-3 4 3 4" />',
+  'Рыба': '<path d="M3 12c3-4 8-5.5 12.5-3.4L20 5.5v13l-4.5-3.1C11 17.5 6 16 3 12z"/><circle cx="8" cy="11.2" r=".9"/>',
+  'Мясо': '<path d="M6.5 6.5c3-2.6 9.2-2.2 11.2 1.4s.4 9-4.6 10.5S4 17 4 13s.1-4.6 2.5-6.5z"/><circle cx="14" cy="11" r="2.2"/>',
+  'Курица': '<path d="M14.6 4.4a5 5 0 0 1 4.5 7.7c-1.6 2.4-4.6 3-6.7 2.2l-3.3 3.3a1.8 1.8 0 1 1-2.6 2.2 1.8 1.8 0 1 1 1.9-2.9l3.3-3.3c-.9-2.1-.3-5 2.1-6.6.8-.5 1.8-.6 2.8-.6z"/>',
 };
 const icon = (key) => (ICON[key] ? `<svg class="wax-ico" viewBox="0 0 24 24" aria-hidden="true">${ICON[key]}</svg>` : '');
 
@@ -41,6 +44,7 @@ export function initRsvp(guest, previousAnswers) {
     return {
       name,
       attending: prev ? prev.attending : null,
+      dish: prev?.dish || null,
       drinks: prev?.drinks ? [...prev.drinks] : [],
       allergy: prev?.allergy ?? '',
       transfer: prev ? prev.transfer : null,
@@ -54,7 +58,7 @@ export function initRsvp(guest, previousAnswers) {
     if (!named) list.push({ kind: 'name', p: 0 });
     people.forEach((person, p) => {
       list.push({ kind: 'attend', p });
-      if (person.attending) list.push({ kind: 'drinks', p }, { kind: 'allergy', p }, { kind: 'transfer', p });
+      if (person.attending) list.push({ kind: 'dish', p }, { kind: 'drinks', p }, { kind: 'allergy', p }, { kind: 'transfer', p });
     });
     list.push({ kind: 'summary' });
     return list;
@@ -94,6 +98,11 @@ export function initRsvp(guest, previousAnswers) {
         <fieldset><legend class="tablet-q">Сможете ли вы присутствовать на торжестве?</legend>
         <div class="wax-chips big">${chip('radio', 'attend', 'yes', 'Приду', person.attending === true, 'yes')}${chip('radio', 'attend', 'no', 'Не приду', person.attending === false, 'no')}</div></fieldset>`;
     }
+    if (st.kind === 'dish') {
+      return `${progress(i, questions)}${personLabel(st.p)}
+        <fieldset><legend class="tablet-q">Какое горячее блюдо вы предпочитаете?</legend>
+        <div class="wax-chips big">${rsvp.dishes.map((d) => chip('radio', 'dish', d, d, person.dish === d, d)).join('')}</div></fieldset>`;
+    }
     if (st.kind === 'drinks') {
       return `${progress(i, questions)}${personLabel(st.p)}
         <fieldset><legend class="tablet-q">Что будете пить?</legend>
@@ -117,6 +126,7 @@ export function initRsvp(guest, previousAnswers) {
       const rows = [line(p, 'attend', pp.attending ? 'yes' : 'no', pp.attending ? 'Придёт' : 'Не сможет прийти')];
       if (!named) rows.unshift(line(p, 'name', 'person', esc(pp.name)));
       if (pp.attending) {
+        rows.push(line(p, 'dish', pp.dish, `Горячее: ${esc(pp.dish || '—')}`));
         rows.push(line(p, 'drinks', pp.drinks[0], esc(pp.drinks.join(', '))));
         rows.push(line(p, 'allergy', 'allergy', `Аллергия: ${esc(pp.allergy || 'нет')}`));
         rows.push(line(p, 'transfer', pp.transfer ? 'bus' : 'noBus', pp.transfer ? 'Нужен трансфер' : 'Без трансфера'));
@@ -168,6 +178,7 @@ export function initRsvp(guest, previousAnswers) {
     const val = (n) => form.querySelector(`#tablet input[name="${n}"]:checked`)?.value;
     if (st.kind === 'name') person.name = form.querySelector('#q-name').value.trim();
     if (st.kind === 'attend' && val('attend')) person.attending = val('attend') === 'yes';
+    if (st.kind === 'dish' && val('dish')) person.dish = val('dish');
     if (st.kind === 'drinks') person.drinks = [...form.querySelectorAll('#tablet input[name="drinks"]:checked')].map((b) => b.value);
     if (st.kind === 'allergy') person.allergy = form.querySelector('#q-allergy').value.trim();
     if (st.kind === 'transfer' && val('transfer')) person.transfer = val('transfer') === 'yes';
@@ -177,6 +188,7 @@ export function initRsvp(guest, previousAnswers) {
     const person = people[st.p];
     if (st.kind === 'name' && !person.name) return 'Напишите, пожалуйста, ваше имя';
     if (st.kind === 'attend' && person.attending === null) return 'Выберите один из вариантов';
+    if (st.kind === 'dish' && !person.dish) return 'Выберите одно из блюд';
     if (st.kind === 'drinks' && !person.drinks.length) return 'Выберите хотя бы один напиток';
     if (st.kind === 'transfer' && person.transfer === null) return 'Выберите один из вариантов';
     return '';
@@ -250,7 +262,7 @@ export function initRsvp(guest, previousAnswers) {
     btn.disabled = true; btn.textContent = 'Отправляем…';
     try {
       const answers = people.map((p) => (p.attending
-        ? { name: p.name, attending: true, drinks: p.drinks, allergy: p.allergy, transfer: p.transfer }
+        ? { name: p.name, attending: true, dish: p.dish, drinks: p.drinks, allergy: p.allergy, transfer: p.transfer }
         : { name: p.name, attending: false }));
       const res = await fetch('/api/rsvp', {
         method: 'POST',
@@ -288,9 +300,13 @@ export function initRsvp(guest, previousAnswers) {
   function reopen() {
     const stage = $('rsvp-stage');
     if (!named) { // generic link: a fresh questionnaire for the next guest
-      Object.assign(people[0], { name: '', attending: null, drinks: [], allergy: '', transfer: null });
+      Object.assign(people[0], { name: '', attending: null, dish: null, drinks: [], allergy: '', transfer: null });
       index = 0;
-    } else index = steps().length - 1; // straight to the summary with everything filled in
+    } else {
+      // straight to the summary with everything filled in — or to the dish tablet if this answer predates that question
+      const missing = steps().findIndex((st) => st.kind === 'dish' && !people[st.p].dish);
+      index = missing >= 0 ? missing : steps().length - 1;
+    }
     stage.classList.remove('sending', 'sealed', 'instant');
     scene.hidden = true;
     render();
